@@ -11,7 +11,7 @@ mongoose.connect("mongodb://localhost", {useNewUrlParser: true});
 // routes, for now
 app.get("/", (req, res) => res.send("Hi"));
 
-//Hello, GitHub
+//Hello, GitHub Again
 
 
 app.listen(port, () => console.log("server up"))
