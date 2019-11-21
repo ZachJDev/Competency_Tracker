@@ -6,7 +6,7 @@ const express  = require("express"),
 const Competency = require("./models/Competency"),
       Skill      = require("./models/Skill"),
       Role       = require("./models/Role"),
-      seedDB     = require("./seedDbs");
+      seedDB     = require("./seedDb");
     //   testDB     = require("./test");
 
 //Mongoose setup:
@@ -16,7 +16,7 @@ seedDB();
 // routes, for now
 app.get("/", (req, res) => res.send("Hi"));
 app.get("/test", (req, res) => {
-
+    res.send("This is the test page")
 })
 
 //Hello, GitHub Again
