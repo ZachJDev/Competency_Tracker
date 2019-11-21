@@ -16,7 +16,7 @@ const withAFork = {
 }
 
 function removeCollections() {
-    Competency.remove({}, (err) => {
+    Competency.deleteMany({}, (err) => {
         if(err){
             console.log(err);
         } else {
@@ -24,7 +24,7 @@ function removeCollections() {
         }
     });
 
-    Skill.remove({}, (err) => {
+    Skill.deleteMany({}, (err) => {
         if(err){
             console.log(err);
         } else {
@@ -32,7 +32,7 @@ function removeCollections() {
         }
     });
 
-    Role.remove({}, (err) =>{
+    Role.deleteMany({}, (err) =>{
         if(err){
             console.log(err);
         } else {
@@ -56,7 +56,7 @@ function seedDB () {
                 if(err){
                     console.log(err);
                 } else {
-                    skill.competency = competency;
+                    skill.competency = competency.name;
                     console.log(skill)
                     console.log(competency)
                     // competency.skills.push({name:skill.name});
