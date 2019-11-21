@@ -9,17 +9,21 @@ const Competency = require("./models/Competency"),
       seedDB     = require("./seedDb");
     //   testDB     = require("./test");
 
+const competencyRoutes = require("./routes/Competencies"),
+      roleRoutes       = require("./routes/Roles");
+
+
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
-mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost/CompetencyTracker", {useNewUrlParser: true, useUnifiedTopology: true});
 seedDB();
+
+//express setup
+app.use("/roles", roleRoutes);
+app.use("/competencies", competencyRoutes);
+
 // routes, for now
 app.get("/", (req, res) => res.send("Hi"));
-app.get("/test", (req, res) => {
-    res.send("This is the test page")
-})
-
-//Hello, GitHub Again
 
 
 app.listen(port, () => console.log("server up"))
