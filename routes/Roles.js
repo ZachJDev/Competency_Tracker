@@ -1,16 +1,43 @@
 const express    = require("express"),
       router     = express.Router(),
       Role       = require("../models/Role.js"),
-      Competency = require("../models/Competency.js"),
-      Skill      = require("../models/Skill.js");
+      Competency = require("../models/Competency.js");
 
 //roles routes
 //index
-router.get("/", (req, res) => res.send("This is the Roles READ route"));
+router.get("/", (req, res) =>{
+    Role.find({}, (err, allRoles) =>{
+        if(err){
+            console.log(err);
+        } else{
+            res.render("roles/index", {roles: allRoles});
+        }
+    })
+    
+    });
 //New
-router.get("/new", (req, res) => res.send("This is the Roles NEW route"));
+router.get("/new", (req, res) => {
+    res.render("roles/new")
+});
 //Create
-router.post("/", (req, res) => res.send("This is the Roles CREATE route"));
+router.post("/", (req, res) => {
+    let name = req.body.name;
+    let description = req.body.description;
+    //code to take skills as string, 
+    let bodySkills = req.body.skills.split(",");
+    //look up which skills they are,
+    //create an array to add them to the new role.
+
+    let newRole = {name: name, description: description};
+    Role.create(newRole, (err, newlyCreatedRole) => {
+        if(err){
+            console.log(err);
+        }else{
+            console.log(newlyCreatedRole);
+            res.redirect("/roles")
+        }
+    })
+});
 //Show
 router.get("/:id", (req, res) => res.send("This is the Roles SHOW route"));
 //Edit

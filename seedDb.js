@@ -1,13 +1,17 @@
 const mongoose = require("mongoose"),
       Competency = require("./models/Competency"),
-      Skill = require("./models/Skill"),
       Role = require("./models/Role");
 
 const eat = {
     name: "eat",
     description: "eat stuff",
     number: 1,
-    topic: {name: "sustenance", description: "keeping you alive."}
+    topic: {name: "sustenance", description: "keeping you alive."},
+    skills:[{
+        name: "blah",
+        description: "blah blah",
+        number: 1
+    }]
 }
 const withAFork = {
     name: "eat with a fork",
@@ -21,14 +25,6 @@ function removeCollections() {
             console.log(err);
         } else {
             console.log("removed Competencies!");
-        }
-    });
-
-    Skill.deleteMany({}, (err) => {
-        if(err){
-            console.log(err);
-        } else {
-            console.log("removed Skills!");
         }
     });
 
@@ -48,21 +44,6 @@ function seedDB () {
             console.log(err);
         } else{
             console.log("added a Competency!")
-            Skill.create({
-                name: "eat with a fork",
-                description: "use a fork when eating",
-                number: 1
-            }, (err, skill) =>{
-                if(err){
-                    console.log(err);
-                } else {
-                    skill.competency = competency.name;
-                    console.log(skill)
-                    console.log(competency)
-                    // competency.skills.push({name:skill.name});
-                    // competency.save();
-                }
-            })
         }
     })
 

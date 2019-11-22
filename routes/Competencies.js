@@ -1,13 +1,12 @@
 const express    = require("express"),
       router     = express.Router(),
       Role       = require("../models/Role.js"),
-      Competency = require("../models/Competency.js"),
-      Skill      = require("../models/Skill.js");
+      Competency = require("../models/Competency.js");
 
 //competencies routes
 //index
 router.get("/", (req, res) => {
-    Competency.findOne({}, (err, Competency) => res.send(Competency.name))
+    Competency.findOne({}, (err, Competency) => res.render("../views/competencies/index.ejs", {Competency:Competency}))
 });
 //New
 router.get("/new", (req, res) => res.send("This is the competencies NEW route"));
