@@ -13,11 +13,7 @@ const eat = {
         number: 1
     }]
 }
-const withAFork = {
-    name: "eat with a fork",
-    description: "use a fork when eating",
-    number: 1
-}
+
 
 function removeCollections() {
     Competency.deleteMany({}, (err) => {

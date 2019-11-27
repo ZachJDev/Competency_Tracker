@@ -20,7 +20,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
 mongoose.connect("mongodb://localhost/CompetencyTracker", {useNewUrlParser: true, useUnifiedTopology: true});
-seedDB();
+// seedDB();
 
 //express setup
 app.use("/roles", roleRoutes);

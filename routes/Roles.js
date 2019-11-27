@@ -25,21 +25,46 @@ router.post("/", (req, res) => {
     let description = req.body.description;
     //code to take skills as string, 
     let bodySkills = req.body.skills.split(",");
+    let pushSkills = []
     //look up which skills they are,
+    bodySkills.forEach(element => {
+        let skill = element.split(".");
+        console.log(skill[0])
+         Competency.findOne({number: skill[0]}, (err, foundCompetency) => {
+            if(err){
+                console.log(err);
+            } else {
+                // console.log(foundCompetency);
+                console.log(foundCompetency.skills[skill[1]-1]._id)
+                 let complete = promise.resolve(pushSkills.push(foundCompetency.skills[skill[1]-1]._id))
+                 
+                   }
+                });
+            });
+        // console.log(competency.name);
     //create an array to add them to the new role.
 
-    let newRole = {name: name, description: description};
+    let newRole = {name: name, description: description, skills: pushSkills[0]};
+    console.log(newRole)
     Role.create(newRole, (err, newlyCreatedRole) => {
         if(err){
             console.log(err);
         }else{
-            console.log(newlyCreatedRole);
+            // console.log(newlyCreatedRole);
             res.redirect("/roles")
         }
     })
 });
 //Show
-router.get("/:id", (req, res) => res.send("This is the Roles SHOW route"));
+router.get("/:id", (req, res) => {
+    Role.findById(req.params.id, (err, role) => {
+        if(err) {
+            console.log(err)
+        } else{
+            res.render("roles/show", {role: role});
+        }
+    });
+});
 //Edit
 router.get("/:id/edit", (req, res) => res.send("This is the Roles EDIT route"));
 //Update
