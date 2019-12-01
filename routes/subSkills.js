@@ -3,46 +3,50 @@ const express = require("express"),
   Role = require("../models/Role.js"),
   Competency = require("../models/Competency.js");
 
-//Skill routes
 //New
 router.get("/new", (req, res) => {
   Competency.findById(req.params.id, (err, competency) => {
     if (err) {
       console.log(err);
     } else {
-      res.render("../views/skills/new", {
+      const skill = competency.skills.id(req.params.skill_id);
+
+      res.render("../views/subskills/new", {
+        skill: skill,
         competency: competency,
-        count: competency.skills.length
+        count: skill.subSkills.length
       });
     }
   });
 });
+
 //Create
 router.post("/", (req, res) => {
-  // a different way of accessing the information than the subskill. I want to see the visual difference each made.
-  newSkill = {
-    name: req.body.name,
-    description: req.body.description,
-    number: req.body.number
-  };
   Competency.findById(req.params.id, (err, competency) => {
     if (err) {
       console.log(err);
     } else {
-      competency.skills.push(newSkill);
+      const skill = competency.skills.id(req.params.skill_id);
+      skill.subSkills.push({
+        name: req.body.name,
+        number: req.body.number,
+        description: req.body.description
+      });
       competency.save();
       res.redirect("/competencies");
     }
   });
 });
-
 //Edit
-router.get("/:id/edit", (req, res) => res.send("This is the Skill EDIT route"));
+router.get("/:subskill_id/edit", (req, res) =>
+  res.send("This is the Skill EDIT route")
+);
 //Update
-router.put("/:id", (req, res) => res.send("This is the Skill UPDATE route"));
+router.put("/:subskill_id", (req, res) =>
+  res.send("This is the Skill UPDATE route")
+);
 //Destroy
-router.delete("/:id", (req, res) =>
+router.delete("/:subskill_id", (req, res) =>
   res.send("This is the Skill DESTROY route")
 );
-
 module.exports = router;

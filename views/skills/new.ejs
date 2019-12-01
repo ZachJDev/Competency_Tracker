@@ -1,0 +1,18 @@
+<h1>Add skill <%=count+1%>: <%=competency.name%></h1>
+<form action="/competencies/<%=competency._id%>/skills" method="POST">
+  <div>
+    <label for="number">Skill Number: </label><input type="number" name="number"
+    value = <%=count+1%> readonly>
+  </div>
+  <div>
+    <label for="name">Skill Name: </label>
+    <input type="text" name="name" placeholder="Skill Name" />
+  </div>
+  <div>
+    <label for="description">Skill Description: </label>
+    <input type="text" name="description" placeholder="Skill description" />
+  </div>
+  <div>
+    <button>Submit!</button>
+  </div>
+</form>

@@ -1,4 +1,19 @@
 <h1>Hello from the competencies!</h1>
-<% if(!!Competency) { %>
-<p><%= Competency.name %></p>
-<% } %>
+<ul>
+  <% if(!!Competencies) { %> <%Competencies.forEach(competency => { %>
+  <li><h2><%=competency.number%>: <%= competency.name %></h2></li>
+    <ul>
+      <%competency.skills.forEach(skill => { %>
+      <li><h3><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3></li>
+      <ul><%skill.subSkills.forEach(subSkill => { %>
+        <li><h4><%=competency.number%>.<%=skill.number%>.<%=subSkill.number%>: <%= subSkill.name%></h4></li>
+    <%})%>
+        <li><a href="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/new"> add subskill</a></li></ul>
+      <%})%>
+      <li><a href="/competencies/<%=competency._id%>/skills/new"> add skill</a></li>
+    </ul>
+  </li>
+<% }); %> <% } %>
+</ul>
+<a href="/competencies/new"> add new competency</a>
+
