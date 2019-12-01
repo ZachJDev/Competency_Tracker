@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 
 const competencySchema = new mongoose.Schema({
-    name: {type: String, unique: true},
+    name: String,
     description: String,
-    number: {type: Number, unique: true},
+    number: Number,
     topic: [{name: String, description: String}],
     skills: [{
-        name: {type: String, unique: true},
+        name: String,
         description: String,
-        number: {type: Number, unique: true},
+        number: Number,
         subSkills: [{    
             name: String,
             description: String,
-            number: {type: Number, unique: true}}]
+            number: Number}]
     }]
 });
 

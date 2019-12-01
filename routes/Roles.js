@@ -27,20 +27,6 @@ router.post("/", (req, res) => {
     let bodySkills = req.body.skills.split(",");
     let pushSkills = []
     //look up which skills they are,
-    bodySkills.forEach(element => {
-        let skill = element.split(".");
-        console.log(skill[0])
-         Competency.findOne({number: skill[0]}, (err, foundCompetency) => {
-            if(err){
-                console.log(err);
-            } else {
-                // console.log(foundCompetency);
-                console.log(foundCompetency.skills[skill[1]-1]._id)
-                 let complete = promise.resolve(pushSkills.push(foundCompetency.skills[skill[1]-1]._id))
-                 
-                   }
-                });
-            });
         // console.log(competency.name);
     //create an array to add them to the new role.
 
