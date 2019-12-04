@@ -1,5 +1,6 @@
 const mongoose = require("mongoose"),
   Competency = require("./models/Competency"),
+  CompetencyCounter = require("./models/CompetencyCounter"),
   Role = require("./models/Role");
 
 const eat = {
@@ -32,10 +33,25 @@ function removeCollections() {
       console.log("removed Roles!");
     }
   });
+  CompetencyCounter.deleteMany({}, err => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("removed the Competency Counter!");
+      CompetencyCounter.create({}, err => {
+        if (err) {
+          console.log("oops");
+        } else {
+          console.log("Created a Counter!");
+        }
+      }); 
+    }
+  });
 }
 
 function seedDB() {
   removeCollections();
+
   // Competency.create(eat, (err, competency) => {
   //   if (err) {
   //     console.log(err);

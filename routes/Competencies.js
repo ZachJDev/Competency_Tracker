@@ -1,6 +1,7 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
+  CompetencyCounter = require("../models/CompetencyCounter"),
   Competency = require("../models/Competency.js");
 
 //competencies routes
@@ -20,21 +21,41 @@ router.get("/new", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      //console.log(num);
-      res.render("competencies/new", { count: num });
+      if (num == 0) {
+        res.render("competencies/new", { count: num });
+      } else {
+        let counter = CompetencyCounter.findOne({}); //hey, I made a promise work
+        counter
+          .then(element => {
+            console.log(element.count);
+          })
+          .then(res.render("competencies/new", { count: num }));
+      }
     }
   });
 });
 
 //Create
 router.post("/", (req, res) => {
-  let newCompetency = { name: req.body.competencyName, description: req.body.description, number: req.body.number };
+  let newCompetency = {
+    name: req.body.competencyName,
+    description: req.body.description,
+    number: req.body.number
+  };
   Competency.create(newCompetency, (err, newlyCreatedCompetency) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("Competency Created!");
-      res.redirect("/competencies");
+      CompetencyCounter.findOne({}, (err, counter) => {
+        if (err) {
+          console.log(err);
+        } else {
+          counter.count.push(newCompetency.number);
+          counter.save()
+          .then(console.log("Competency Created!", counter.count))
+          .then(res.redirect("/competencies"));
+        }
+      });
     }
   });
 });

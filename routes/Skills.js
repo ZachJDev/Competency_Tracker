@@ -3,16 +3,36 @@ const express = require("express"),
   Role = require("../models/Role.js"),
   Competency = require("../models/Competency.js");
 
+function findSkillCount(competency) {
+  if (competency.skillsArray.length == 0) { //if this is the first skill added
+    return 0;
+  } else {
+    let skillsArray = competency.skillsArray; //these next two assignments are for readability, but I don't really know if they need to be done.
+    let length = skillsArray.length;
+    if (length != skillsArray[length - 1]) { // if a skill has been deleted, this should return the number of the deleted skill.
+      for (i = 0; i < length; i++) {
+        if (skillsArray[i] != i + 1) {
+          return i + 1;
+        }
+      }
+    }
+    return length;
+  }
+}
 //Skill routes
 //New
 router.get("/new", (req, res) => {
+  var count;
   Competency.findById(req.params.id, (err, competency) => {
     if (err) {
       console.log(err);
     } else {
+      console.log(competency.skillsArray);
+      count = findSkillCount(competency);
+      console.log(`sending count ${count} to new page skills Array is ${competency.skillsArray}`)
       res.render("../views/skills/new", {
         competency: competency,
-        count: competency.skills.length
+        count: count
       });
     }
   });
@@ -29,9 +49,10 @@ router.post("/", (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      console.log("from the POST route number should be: " + newSkill.number);
       competency.skills.push(newSkill);
-      competency.save();
-      res.redirect("/competencies");
+      competency.skillsArray.push(newSkill.number);
+      competency.save().then(res.redirect("/competencies"));
     }
   });
 });
