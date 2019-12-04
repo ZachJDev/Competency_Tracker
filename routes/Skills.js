@@ -3,13 +3,25 @@ const express = require("express"),
   Role = require("../models/Role.js"),
   Competency = require("../models/Competency.js");
 
+//NEW SOLUTION TO MY DELTED COMPETENCIES AND SKILLS PROBLEM:
+//create a list of deleted skills/comps in model (same place
+//as the counter arrays are now.
+//push() any deleted items on to there.
+//when creating a new skill/comp, check if that array is empty.
+//if so, count = length + 1,
+//if not, count = .unshift()ed number,
+//indexOf() the number before it, and splice the new skill there
+//hopefully Mongoose has special sorting so my competencies don't get out of order...
+
 function findSkillCount(competency) {
-  if (competency.skillsArray.length == 0) { //if this is the first skill added
+  if (competency.skillsArray.length == 0) {
+    //check if this is the first skill added
     return 0;
   } else {
     let skillsArray = competency.skillsArray; //these next two assignments are for readability, but I don't really know if they need to be done.
     let length = skillsArray.length;
-    if (length != skillsArray[length - 1]) { // if a skill has been deleted, this should return the number of the deleted skill.
+    if (length != skillsArray[length - 1]) {
+      // if a skill has been deleted, this should return the number of the deleted skill.
       for (i = 0; i < length; i++) {
         if (skillsArray[i] != i + 1) {
           return i + 1;
@@ -29,7 +41,9 @@ router.get("/new", (req, res) => {
     } else {
       console.log(competency.skillsArray);
       count = findSkillCount(competency);
-      console.log(`sending count ${count} to new page skills Array is ${competency.skillsArray}`)
+      console.log(
+        `sending count ${count} to new page skills Array is ${competency.skillsArray}`
+      );
       res.render("../views/skills/new", {
         competency: competency,
         count: count
