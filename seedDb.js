@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"),
   Competency = require("./models/Competency"),
-  CompetencyCounter = require("./models/CompetencyCounter"),
+  DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
   Role = require("./models/Role");
 
 const eat = {
@@ -22,7 +22,31 @@ function removeCollections() {
     if (err) {
       console.log(err);
     } else {
-      console.log("removed Competencies!");
+      Competency.create(
+        {
+          name: "blah",
+          number: 1,
+          description: "askldjf",
+          skills: [
+            {
+              number: 2,
+              name: "ahs",
+              deletedSubSkills: [1],
+              subSkills: [{ number: 2 }, { number: 3 }]
+            },
+            { number: 4, name: "ahws" },
+            { number: 5, name: "ahw3s" }
+          ],
+          deletedSkills: [1, 3]
+        },
+        err => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("removed Competencies!");
+          }
+        }
+      );
     }
   });
 
@@ -33,18 +57,18 @@ function removeCollections() {
       console.log("removed Roles!");
     }
   });
-  CompetencyCounter.deleteMany({}, err => {
+  DeletedCompetencyCounter.deleteMany({}, err => {
     if (err) {
       console.log(err);
     } else {
       console.log("removed the Competency Counter!");
-      CompetencyCounter.create({}, err => {
+      DeletedCompetencyCounter.create({ count: [2, 4, 15, 3] }, err => {
         if (err) {
           console.log("oops");
         } else {
           console.log("Created a Counter!");
         }
-      }); 
+      });
     }
   });
 }

@@ -1,5 +1,5 @@
 <h1>The New Subskill Form for <%=skill.name%></h1>
-<h2><%=competency.number%>.<%=skill.number%>.<%=count+1%></h2>
+<h2><%=competency.number%>.<%=skill.number%>.<%=count%></h2>
 
 <form
   action="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills"
@@ -7,15 +7,11 @@
 >
   <div>
     <label for="number">subskill Number: </label><input type="number"
-    name="number" value = <%=count+1%> readonly>
+    name="number" value = <%=count%> readonly>
   </div>
   <div>
     <label for="name">subskill Name: </label>
     <input type="text" name="name" placeholder="subskill Name" />
-  </div>
-  <div>
-    <label for="description">subskill Description: </label>
-    <input type="text" name="description" placeholder="subskill description" />
   </div>
   <div>
     <button>Submit!</button>

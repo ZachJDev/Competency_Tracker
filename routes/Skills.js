@@ -3,33 +3,15 @@ const express = require("express"),
   Role = require("../models/Role.js"),
   Competency = require("../models/Competency.js");
 
-//NEW SOLUTION TO MY DELTED COMPETENCIES AND SKILLS PROBLEM:
-//create a list of deleted skills/comps in model (same place
-//as the counter arrays are now.
-//push() any deleted items on to there.
-//when creating a new skill/comp, check if that array is empty.
-//if so, count = length + 1,
-//if not, count = .unshift()ed number,
-//indexOf() the number before it, and splice the new skill there
-//hopefully Mongoose has special sorting so my competencies don't get out of order...
-
-function findSkillCount(competency) {
-  if (competency.skillsArray.length == 0) {
-    //check if this is the first skill added
-    return 0;
-  } else {
-    let skillsArray = competency.skillsArray; //these next two assignments are for readability, but I don't really know if they need to be done.
-    let length = skillsArray.length;
-    if (length != skillsArray[length - 1]) {
-      // if a skill has been deleted, this should return the number of the deleted skill.
-      for (i = 0; i < length; i++) {
-        if (skillsArray[i] != i + 1) {
-          return i + 1;
-        }
-      }
+function findInsertionIndex(number, skillNumbers) {
+  //I'll need to rewrite this as a for loop if i don't want it to iterate through the entire array.
+  let newIndex = 0;
+  skillNumbers.forEach((el, index, array) => {
+    if (number > array[index].number && number < array[index + 1].number) { //check if number is between the current el and the next.
+      newIndex = index + 1;
     }
-    return length;
-  }
+  });
+  return newIndex;
 }
 //Skill routes
 //New
@@ -39,34 +21,77 @@ router.get("/new", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(competency.skillsArray);
-      count = findSkillCount(competency);
-      console.log(
-        `sending count ${count} to new page skills Array is ${competency.skillsArray}`
-      );
-      res.render("../views/skills/new", {
-        competency: competency,
-        count: count
-      });
+      console.log(competency.deletedSkills);
+      if (competency.deletedSkills.length) {
+        //if truthy; if there are items in deletedSkills
+        count = competency.deletedSkills.shift();
+        competency.save().then(
+          // trying to unduplicate this code is proving harder than I expected.
+          res.render("../views/skills/new", {
+            competency: competency,
+            count: count
+          })
+        );
+      } else {
+        count = competency.skills.length + 1;
+        res.render("../views/skills/new", {
+          competency: competency,
+          count: count
+        });
+      }
     }
   });
 });
+
 //Create
 router.post("/", (req, res) => {
-  // a different way of accessing the information than the subskill. I want to see the visual difference each made.
-  newSkill = {
+  let newSkill = {
     name: req.body.name,
-    description: req.body.description,
     number: req.body.number
   };
   Competency.findById(req.params.id, (err, competency) => {
     if (err) {
       console.log(err);
     } else {
-      console.log("from the POST route number should be: " + newSkill.number);
-      competency.skills.push(newSkill);
-      competency.skillsArray.push(newSkill.number);
-      competency.save().then(res.redirect("/competencies"));
+      skillNumbers = competency.skills.map((obj, index) => {
+        newObject = {};
+        newObject.number = obj.number;
+        newObject.index = index;
+        return newObject;
+      }); //returns an array of all the skill numbers. I think I can rewrite this all to just work  with the competency.skills array and not map a new one
+
+      //WARNING VERY WET CODE TO FOLLOW
+
+      if (skillNumbers.length) {
+        //insert at end
+        if (newSkill.number > skillNumbers[skillNumbers.length - 1].number) {
+          competency.skills.push(newSkill);
+          competency.save().then(res.redirect("/competencies"));
+        }
+        //insert at beginning
+        else if (newSkill.number < skillNumbers[0].number) {
+          console.log("in the pushtofront");
+          updatedCompetency = Competency.updateOne(
+            { _id: req.params.id },
+            { $push: { skills: { $each: [newSkill], $position: 0 } } } //not sure why mongo requires $each for $position, but at least this works...
+          );
+          updatedCompetency.then(res.redirect("/competencies"));
+        } //insert somewhere in the middle
+        else {
+          console.log("in the middle");
+          newIndex = findInsertionIndex(newSkill.number, skillNumbers);
+          console.log(newIndex);
+          updatedCompetency = Competency.updateOne(
+            { _id: req.params.id },
+            { $push: { skills: { $each: [newSkill], $position: newIndex } } } //not sure why mongo requires $each for $position, but at least this works...
+          );
+          updatedCompetency.then(res.redirect("/competencies"));
+        }
+        // console.log(skillNumbers);
+      } else {
+        competency.skills.push(newSkill);
+        competency.save().then(res.redirect("/competencies"));
+      }
     }
   });
 });

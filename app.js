@@ -6,7 +6,7 @@ const express = require("express"),
   port = 5500;
 
 const Competency = require("./models/Competency"),
-  CompetencyCounter = require("./models/CompetencyCounter"),
+  DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
   Role = require("./models/Role"),
   seedDB = require("./seedDb");
 

@@ -1,39 +1,44 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
-  CompetencyCounter = require("../models/CompetencyCounter"),
+  DeletedCompetencyCounter = require("../models/DeletedCompetencyCounter"),
   Competency = require("../models/Competency.js");
 
 //competencies routes
 //index
 router.get("/", (req, res) => {
-  Competency.find({}, (err, Competencies) => {
+  Competency.find({}, null, {sort: {number: 1}}, (err, Competencies) => { //trying sort with competencies and positional insertion with skills. (partly because I'm having trouble sorting arrays ofsubdocuments with the sort method/option)
     if (err) {
       console.log(err);
     } else {
-      res.render("competencies/index.ejs", { Competencies: Competencies });
+      res.render("competencies/index.ejs", { Competencies: Competencies })
     }
   });
 });
 //New
 router.get("/new", (req, res) => {
-  Competency.countDocuments({}, (err, num) => {
-    if (err) {
-      console.log(err);
+  let counter = DeletedCompetencyCounter.findOne({});
+  counter.then(element => {
+    console.log(element.count);
+    if (element.count.length) {
+      console.log("shift time!");
+      var number = element.count.shift();
+      element.save();
+      res.render("competencies/new", { count: number });
     } else {
-      if (num == 0) {
-        res.render("competencies/new", { count: num });
-      } else {
-        let counter = CompetencyCounter.findOne({}); //hey, I made a promise work
-        counter
-          .then(element => {
-            console.log(element.count);
-          })
-          .then(res.render("competencies/new", { count: num }));
-      }
+      Competency.countDocuments({}, (err, count) => {
+        //this kept returning undefined when structured like a promise, so I rewrote it to be callback-y
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Counting Comps Time!" + count);
+          var number = count+1;
+          res.render("competencies/new", { count: number }); //the asyc essence of countDocs made it pretty impossible to keep this outside of this callback
+        }
+      });
     }
   });
-});
+}); //if anyone comes and sees this code and the comment previously here, I was wrong. mongoose queries are NOT promises.
 
 //Create
 router.post("/", (req, res) => {
@@ -42,22 +47,7 @@ router.post("/", (req, res) => {
     description: req.body.description,
     number: req.body.number
   };
-  Competency.create(newCompetency, (err, newlyCreatedCompetency) => {
-    if (err) {
-      console.log(err);
-    } else {
-      CompetencyCounter.findOne({}, (err, counter) => {
-        if (err) {
-          console.log(err);
-        } else {
-          counter.count.push(newCompetency.number);
-          counter.save()
-          .then(console.log("Competency Created!", counter.count))
-          .then(res.redirect("/competencies"));
-        }
-      });
-    }
-  });
+  Competency.create(newCompetency).then(res.redirect("/Competencies"));
 });
 
 //Show

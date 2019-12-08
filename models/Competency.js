@@ -5,12 +5,12 @@ const competencySchema = new mongoose.Schema({
   description: String,
   number: Number,
   topic: [{ name: String, description: String }],
-  skillsArray: [Number],
+  deletedSkills: [Number],
   skills: [
     {
       name: String,
       number: Number,
-      subSkillArray: [Number],
+      deletedSubSkills: [Number],
       subSkills: [
         {
           name: String,

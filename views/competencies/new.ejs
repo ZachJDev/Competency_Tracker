@@ -1,5 +1,5 @@
 <h1>This is the new competency form:</h1>
-<h2>Competency #<%= count+1 %></h2>
+<h2>Competency #<%= count %></h2>
 <form action="/competencies" method="POST">
   <div>
     <select name="topic">
@@ -8,7 +8,7 @@
   </div>
   <div>
     <label for="number">Competency Number:</label><input type="number"
-    name="number" value = <%=count+1%> readonly>
+    name="number" value = <%=count%> readonly>
   </div>
   <div>
     <label for="competencyName">Competency Name:</label
