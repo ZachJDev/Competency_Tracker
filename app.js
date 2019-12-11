@@ -2,6 +2,7 @@ const express = require("express"),
   mongoose = require("mongoose"),
   request = require("request"),
   bodyParser = require("body-parser"),
+  methodOverride = require("method-override"),
   app = express(),
   port = 5500;
 
@@ -9,6 +10,9 @@ const Competency = require("./models/Competency"),
   DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
   Role = require("./models/Role"),
   seedDB = require("./seedDb");
+
+app.use(methodOverride('_method'))
+
 
 app.use(bodyParser.urlencoded({ extended: true })); //This has to be BEFORE the routes.
 //routes
@@ -34,6 +38,4 @@ app.use("/competencies/:id/skills", skillRoutes);
 app.use("/competencies/:id/skills/:skill_id/subskills", subSkillRoutes);
 app.set("view engine", "ejs");
 
-// routes, for now
-// app.get("/", (req, res) => res.send("Hi"));
 app.listen(port, () => console.log("server up"));

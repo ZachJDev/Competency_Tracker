@@ -7,12 +7,14 @@ function findInsertionIndex(number, skillNumbers) {
   //I'll need to rewrite this as a for loop if i don't want it to iterate through the entire array.
   let newIndex = 0;
   skillNumbers.forEach((el, index, array) => {
-    if (number > array[index].number && number < array[index + 1].number) { //check if number is between the current el and the next.
+    if (number > array[index].number && number < array[index + 1].number) {
+      //check if number is between the current el and the next.
       newIndex = index + 1;
     }
   });
   return newIndex;
 }
+
 //Skill routes
 //New
 router.get("/new", (req, res) => {
@@ -97,12 +99,36 @@ router.post("/", (req, res) => {
 });
 
 //Edit
-router.get("/:id/edit", (req, res) => res.send("This is the Skill EDIT route"));
-//Update
-router.put("/:id", (req, res) => res.send("This is the Skill UPDATE route"));
-//Destroy
-router.delete("/:id", (req, res) =>
-  res.send("This is the Skill DESTROY route")
+router.get("/:skills_id/edit", (req, res) =>
+  res.send("This is the Skill EDIT route")
 );
+//Update
+router.put("/:skills_id", (req, res) =>
+  res.send("This is the Skill UPDATE route")
+);
+//Destroy
+router.delete("/:skills_id", (req, res) => {
+  let findCompetency = Competency.findById(req.params.id);
+  let findSkill = findCompetency.then(competency => {
+    let skill = competency.skills.id(req.params.skills_id);
+    console.log(skill);
+    competency.deletedSkills.push(skill.number); //adds the skill number to the deleted-skills queue. problem (?): skills are reinserted in order of deletion, not nescessarily numerical order.
+    competency.save();
+  });
+  findSkill.then(
+    Competency.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { skills: { _id: req.params.skills_id } } },
+      (err, comp) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(comp);
+          res.redirect("/competencies");
+        }
+      }
+    )
+  );
+}); // thing.then((err, Competency) => console.log(Competency))
 
 module.exports = router;
