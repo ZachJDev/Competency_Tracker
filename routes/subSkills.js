@@ -40,7 +40,7 @@ router.get("/new", (req, res) => {
         res.render("../views/subskills/new", {
           skill: skill,
           competency: competency,
-          count: skill.subSkills.length
+          count: skill.subSkills.length + 1
         });
       }
     }
@@ -101,7 +101,20 @@ router.put("/:subskill_id", (req, res) =>
   res.send("This is the Skill UPDATE route")
 );
 //Destroy
-router.delete("/:subskill_id", (req, res) =>
-  res.send("This is the Skill DESTROY route")
-);
+router.delete("/:subskill_id", (req, res) => {
+  let findCompetency = Competency.findById(req.params.id);
+  let findSkill = findCompetency.then(competency => {
+    // console.log(competency);
+    let skill = competency.skills.id(req.params.skill_id);
+    // console.log(skill);
+    let subSkill = skill.subSkills.id(req.params.subskill_id);
+   let subSkillIndex = skill.subSkills.findIndex((element) => element == subSkill);
+   skill.subSkills.splice(subSkillIndex, 1);
+   skill.deletedSubSkills.push(subSkill.number);
+   //I need to write a sort function that works with numbers and not strings.
+    console.log(subSkillIndex)
+    competency.save();
+  });
+  findSkill.then(res.redirect("/competencies"));
+});
 module.exports = router;

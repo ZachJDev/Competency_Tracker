@@ -6,7 +6,7 @@
       <%competency.skills.forEach(skill => { %>
       <li><h3><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3><form method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"> <button>delete</button> </form></li>
       <ul><%skill.subSkills.forEach(subSkill => { %>
-        <li><h4><%=competency.number%>.<%=skill.number%>.<%=subSkill.number%>: <%= subSkill.name%></h4></li>
+        <li><h4><%=competency.number%>.<%=skill.number%>.<%=subSkill.number%>: <%= subSkill.name%></h4><form method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/<%=subSkill._id%>?_method=DELETE"> <button>delete</button> </form></li>
     <%})%>
         <li><a href="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/new"> add subskill</a></li></ul>
       <%})%>

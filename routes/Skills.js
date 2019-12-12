@@ -99,18 +99,18 @@ router.post("/", (req, res) => {
 });
 
 //Edit
-router.get("/:skills_id/edit", (req, res) =>
+router.get("/:skill_id/edit", (req, res) =>
   res.send("This is the Skill EDIT route")
 );
 //Update
-router.put("/:skills_id", (req, res) =>
+router.put("/:skill_id", (req, res) =>
   res.send("This is the Skill UPDATE route")
 );
 //Destroy
-router.delete("/:skills_id", (req, res) => {
+router.delete("/:skill_id", (req, res) => {
   let findCompetency = Competency.findById(req.params.id);
   let findSkill = findCompetency.then(competency => {
-    let skill = competency.skills.id(req.params.skills_id);
+    let skill = competency.skills.id(req.params.skill_id);
     console.log(skill);
     competency.deletedSkills.push(skill.number); //adds the skill number to the deleted-skills queue. problem (?): skills are reinserted in order of deletion, not nescessarily numerical order.
     competency.save();
@@ -118,7 +118,7 @@ router.delete("/:skills_id", (req, res) => {
   findSkill.then(
     Competency.findByIdAndUpdate(
       req.params.id,
-      { $pull: { skills: { _id: req.params.skills_id } } },
+      { $pull: { skills: { _id: req.params.skill_id } } },
       (err, comp) => {
         if (err) {
           console.log(err);
