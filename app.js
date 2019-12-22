@@ -6,7 +6,8 @@ const express = require("express"),
   app = express(),
   port = 5500;
 
-const Competency = require("./models/Competency"),
+const Skill = require("./models/Skill"),
+ Competency = require("./models/Competency"),
   DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
   Role = require("./models/Role"),
   seedDB = require("./seedDb");

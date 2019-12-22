@@ -1,7 +1,8 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
-  Competency = require("../models/Competency.js");
+  Skill = require("../models/Skill");
+Competency = require("../models/Competency.js");
 
 function findInsertionIndex(number, skillNumbers) {
   //I'll need to rewrite this as a for loop if i don't want it to iterate through the entire array.
@@ -17,33 +18,20 @@ function findInsertionIndex(number, skillNumbers) {
 
 //New
 router.get("/new", (req, res) => {
-  Competency.findById(req.params.id, (err, competency) => {
-    if (err) {
-      console.log(err);
-    } else {
-      const skill = competency.skills.id(req.params.skill_id);
-      console.log(skill.deletedSubSkills);
-      if (skill.deletedSubSkills.length) {
-        let count = skill.deletedSubSkills.shift();
-        console.log(count);
-        skill.save().then(
-          competency.save().then(
-            // trying to unduplicate this code is proving harder than I expected.
-            res.render("../views/subskills/new", {
-              skill: skill,
-              competency: competency,
-              count: count
-            })
-          )
-        );
-      } else {
-        res.render("../views/subskills/new", {
-          skill: skill,
-          competency: competency,
-          count: skill.subSkills.length + 1
-        });
-      }
-    }
+  Competency.findById(req.params.id).then(competency => {
+    let sendCompetency = competency;
+    Skill.findById(req.params.skill_id).then(skill => {
+      let sendSkill = skill;
+      let count = skill.deletedSubSkills.length
+        ? skill.deletedSubSkills.shift()
+        : skill.subSkills.length + 1;
+      skill.save();
+      res.render("../views/subskills/new", {
+        count: count,
+        competency: sendCompetency,
+        skill: sendSkill
+      });
+    });
   });
 });
 
@@ -53,41 +41,28 @@ router.post("/", (req, res) => {
     number: req.body.number,
     name: req.body.name
   };
-  Competency.findById(req.params.id, (err, competency) => {
-    if (err) {
-      console.log(err);
-    } else {
-      const skill = competency.skills.id(req.params.skill_id);
-      skillNumbers = skill.subSkills.map((obj, index) => {
-        newObject = {};
-        newObject.number = obj.number;
-        newObject.index = index;
-        return newObject;
-      });
-
-      if (skillNumbers.length) {
-        if (newSubSkill.number < skillNumbers[0].number) {
-          //insert at front
-          skill.subSkills.splice(0, 0, newSubSkill);
-          competency.save().then(res.redirect("/competencies"));
-        } else if (
-          newSubSkill.number > skillNumbers[skillNumbers.length - 1].number
-        ) {
-          //insert at back (combine with the outer else?)
-          skill.subSkills.push(newSubSkill);
-          competency.save().then(res.redirect("/competencies"));
-        } else {
-          //insert in the middle
-          newIndex = findInsertionIndex(newSubSkill.number, skillNumbers);
-          skill.subSkills.splice(newIndex, 0, newSubSkill);
-          console.log(skill.subSkills);
-          competency.save().then(res.redirect("/competencies"));
-        }
-      } else {
-        //when there are no
+  Skill.findById(req.params.skill_id).then(skill => {
+    let subSkills = skill.subSkills;
+    if (subSkills.length) {
+      if (newSubSkill.number < subSkills[0].number) {
+        //insert at front
+        skill.subSkills.splice(0, 0, newSubSkill);
+        skill.save().then(res.redirect("/competencies"));
+      } else if (newSubSkill.number > subSkills[subSkills.length - 1].number) {
+        //insert at back (combine with the outer else?)
         skill.subSkills.push(newSubSkill);
-        competency.save().then(res.redirect("/competencies"));
+        skill.save().then(res.redirect("/competencies"));
+      } else {
+        //insert in the middle
+        const newIndex = findInsertionIndex(newSubSkill.number, subSkills);
+        skill.subSkills.splice(newIndex, 0, newSubSkill);
+        console.log(skill.subSkills);
+        skill.save().then(res.redirect("/competencies"));
       }
+    } else {
+      //when there are no
+      skill.subSkills.push(newSubSkill);
+      skill.save().then(res.redirect("/competencies"));
     }
   });
 });
@@ -102,19 +77,18 @@ router.put("/:subskill_id", (req, res) =>
 );
 //Destroy
 router.delete("/:subskill_id", (req, res) => {
-  let findCompetency = Competency.findById(req.params.id);
-  let findSkill = findCompetency.then(competency => {
-    // console.log(competency);
-    let skill = competency.skills.id(req.params.skill_id);
-    // console.log(skill);
+  Skill.findById(req.params.skill_id).then(skill => {
+    //I feel like all of these nested .then()s might miss the point of doing them. OR I'm using them correctly, and it's just what one has to do to do nested asychronous calls.
     let subSkill = skill.subSkills.id(req.params.subskill_id);
-   let subSkillIndex = skill.subSkills.findIndex((element) => element == subSkill);
-   skill.subSkills.splice(subSkillIndex, 1);
-   skill.deletedSubSkills.push(subSkill.number);
-   //I need to write a sort function that works with numbers and not strings.
-    console.log(subSkillIndex)
-    competency.save();
+    let subSkillIndex = skill.subSkills.findIndex(
+      element => element == subSkill
+    );
+    skill.subSkills.splice(subSkillIndex, 1);
+    skill.deletedSubSkills.push(subSkill.number);
+    //I need to write a sort function that works with numbers and not strings.
+    console.log(subSkillIndex);
+    skill.save().then(res.redirect("/competencies"));
   });
-  findSkill.then(res.redirect("/competencies"));
 });
+
 module.exports = router;

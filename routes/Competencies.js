@@ -7,7 +7,7 @@ const express = require("express"),
 //competencies routes
 //index
 router.get("/", (req, res) => {
-  Competency.find({}, null, {sort: {number: 1}}, (err, Competencies) => { //trying sort with competencies and positional insertion with skills. (partly because I'm having trouble sorting arrays ofsubdocuments with the sort method/option)
+  Competency.find({}, null, {sort: {number: 1}}).populate({path: 'skills', options: {sort: {'number': 1}}}).exec( (err, Competencies) => {
     if (err) {
       console.log(err);
     } else {

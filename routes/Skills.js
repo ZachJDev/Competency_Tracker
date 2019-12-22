@@ -1,19 +1,8 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
-  Competency = require("../models/Competency.js");
-
-function findInsertionIndex(number, skillNumbers) {
-  //I'll need to rewrite this as a for loop if i don't want it to iterate through the entire array.
-  let newIndex = 0;
-  skillNumbers.forEach((el, index, array) => {
-    if (number > array[index].number && number < array[index + 1].number) {
-      //check if number is between the current el and the next.
-      newIndex = index + 1;
-    }
-  });
-  return newIndex;
-}
+  Skill = require("../models/Skill.js");
+Competency = require("../models/Competency.js");
 
 //Skill routes
 //New
@@ -26,6 +15,7 @@ router.get("/new", (req, res) => {
       console.log(competency.deletedSkills);
       if (competency.deletedSkills.length) {
         //if truthy; if there are items in deletedSkills
+        //THIS NEEDS TO HAPPEN AFTER THE  NEW SKILL HAS BEEN SAVED. RIGHT NOW, HITTING 'BACK' ON THE NEW FORM WILL MESS UP THE ORDERING
         count = competency.deletedSkills.shift();
         competency.save().then(
           // trying to unduplicate this code is proving harder than I expected.
@@ -51,51 +41,18 @@ router.post("/", (req, res) => {
     name: req.body.name,
     number: req.body.number
   };
-  Competency.findById(req.params.id, (err, competency) => {
-    if (err) {
-      console.log(err);
-    } else {
-      skillNumbers = competency.skills.map((obj, index) => {
-        newObject = {};
-        newObject.number = obj.number;
-        newObject.index = index;
-        return newObject;
-      }); //returns an array of all the skill numbers. I think I can rewrite this all to just work  with the competency.skills array and not map a new one
-
-      //WARNING VERY WET CODE TO FOLLOW
-
-      if (skillNumbers.length) {
-        //insert at end
-        if (newSkill.number > skillNumbers[skillNumbers.length - 1].number) {
-          competency.skills.push(newSkill);
-          competency.save().then(res.redirect("/competencies"));
+  Skill.create(newSkill)
+    .then(skill => {
+      Competency.findById(req.params.id, (err, competency) => {
+        if (err) {
+          console.log(err);
+        } else {
+          competency.skills.push(skill._id);
+          competency.save();
         }
-        //insert at beginning
-        else if (newSkill.number < skillNumbers[0].number) {
-          console.log("in the pushtofront");
-          updatedCompetency = Competency.updateOne(
-            { _id: req.params.id },
-            { $push: { skills: { $each: [newSkill], $position: 0 } } } //not sure why mongo requires $each for $position, but at least this works...
-          );
-          updatedCompetency.then(res.redirect("/competencies"));
-        } //insert somewhere in the middle
-        else {
-          console.log("in the middle");
-          newIndex = findInsertionIndex(newSkill.number, skillNumbers);
-          console.log(newIndex);
-          updatedCompetency = Competency.updateOne(
-            { _id: req.params.id },
-            { $push: { skills: { $each: [newSkill], $position: newIndex } } } //not sure why mongo requires $each for $position, but at least this works...
-          );
-          updatedCompetency.then(res.redirect("/competencies"));
-        }
-        // console.log(skillNumbers);
-      } else {
-        competency.skills.push(newSkill);
-        competency.save().then(res.redirect("/competencies"));
-      }
-    }
-  });
+      });
+    })
+    .then(res.redirect("/competencies"));
 });
 
 //Edit
@@ -108,27 +65,17 @@ router.put("/:skill_id", (req, res) =>
 );
 //Destroy
 router.delete("/:skill_id", (req, res) => {
-  let findCompetency = Competency.findById(req.params.id);
-  let findSkill = findCompetency.then(competency => {
-    let skill = competency.skills.id(req.params.skill_id);
-    console.log(skill);
-    competency.deletedSkills.push(skill.number); //adds the skill number to the deleted-skills queue. problem (?): skills are reinserted in order of deletion, not nescessarily numerical order.
-    competency.save();
+  let skillNumber;
+  Skill.findById(req.params.skill_id).then(skill => {
+    skillNumber = skill.number;
+    Competency.findById(req.params.id).then(competency => {
+      let deletedSkills = competency.deletedSkills;
+      deletedSkills.push(skillNumber); // I need to sort this array here too.
+      deletedSkills.sort((a, b) => a - b); // this should always put the lowest number in the first position.
+      skillIndex = competency.skills.indexOf(req.params.skill_id);
+      competency.skills.splice(skillIndex, 1);
+      competency.save().then(res.redirect("/competencies"));
+    });
   });
-  findSkill.then(
-    Competency.findByIdAndUpdate(
-      req.params.id,
-      { $pull: { skills: { _id: req.params.skill_id } } },
-      (err, comp) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(comp);
-          res.redirect("/competencies");
-        }
-      }
-    )
-  );
-}); // thing.then((err, Competency) => console.log(Competency))
-
+});
 module.exports = router;

@@ -1,9 +1,9 @@
 <form action="/roles" method="POST">
     <div>
-        <input type="text" name="name" placeholder="Role Name">
+        <input type="text" name="name" placeholder="Role Name" <%if(name) {%> value="<%=name%>"<%}%>>
     </div>
     <div>
-        <input type="text" name="description" placeholder="Role Description">
+        <input type="text" name="description" placeholder="Role Description" <%if(description) {%> value="<%=description%>"<%}%>>
     </div>
     <div>
         <input type="text" name="skills" placeholder="Role Skills">
