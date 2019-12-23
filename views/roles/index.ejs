@@ -2,6 +2,7 @@
 <div>
     <%roles.forEach((role) => { %>
         <a href="/roles/<%=role._id%>"><h4><%=role.name%></h4></a>
+        <p><%= role.competenciesAndSkills%></p>
     <%})%>
     <a href="/roles/new">add new role</a>
 </div>
