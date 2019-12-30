@@ -9,7 +9,7 @@ const competencySchema = new mongoose.Schema({
   deletedSkills: [Number],
   skills: [{type: mongoose.Schema.Types.ObjectId, ref: "Skill"}]
 });
-competencySchema.plugin(require('mongoose-autopopulate'))
+
 const Competency = mongoose.model("Competency", competencySchema);
 
 module.exports = Competency;

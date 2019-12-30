@@ -15,6 +15,6 @@ const roleSchema = new mongoose.Schema({
     }
   ]
 });
-roleSchema.plugin(require("mongoose-autopopulate"));
+
 const Role = mongoose.model("Role", roleSchema);
 module.exports = Role;

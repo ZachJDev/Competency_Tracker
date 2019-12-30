@@ -54,7 +54,7 @@ router.post("/", (req, res) => {
         let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
         let skillKeys = Object.keys(skillsObj);
         let newSkillsArray = [];
-        skillKeys.forEach(key => {
+        skillKeys.forEach(key => { //I need to rewrite ths and and the below forEach as traditioal For loops. 
           keyAsNum = Number(key);
           Competency.findOne({ number: keyAsNum })
             .populate("skills")
