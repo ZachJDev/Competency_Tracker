@@ -26,7 +26,10 @@ function createSkillsMap(skills) {
   });
   return skillsMap;
 }
-//roles routes
+
+
+
+//roles routes. uses "/roles"
 //index
 router.get("/", (req, res) => {
   Role.find({})
@@ -46,16 +49,17 @@ router.get("/new", (req, res) => {
 });
 //Create
 router.post("/", (req, res) => {
-  let roleName = req.body.name;
-  let roleDescription = req.body.description;
+  const roleName = req.body.name;
+  const roleDescription = req.body.description;
   try {
     Role.create({ name: roleName, description: roleDescription })
       .then(role => {
         let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
         let skillKeys = Object.keys(skillsObj);
         let newSkillsArray = [];
-        skillKeys.forEach(key => { //I need to rewrite ths and and the below forEach as traditioal For loops. 
-          keyAsNum = Number(key);
+        skillKeys.forEach(key => {
+          //I need to rewrite ths and and the below forEach as traditioal For loops.
+          const keyAsNum = Number(key);
           Competency.findOne({ number: keyAsNum })
             .populate("skills")
             .then(competency => {
@@ -81,7 +85,7 @@ router.post("/", (req, res) => {
       })
       .then(setTimeout(() => res.redirect("/roles"), 0));
   } catch (error) {
-    console.log("akljsdhfalskjhflaskdjhfdlkasjhdflkjh");
+    console.log("Error When Creating Role");
     console.log(error);
     res.render("roles/new", { name: name, description: description });
   }
@@ -90,8 +94,8 @@ router.post("/", (req, res) => {
 //Show
 router.get("/:id", (req, res) => {
   Role.findById(req.params.id)
-  .populate({ path: "competenciesAndSkills.competency" })
-  .populate({ path: "competenciesAndSkills.skills" })
+    .populate({ path: "competenciesAndSkills.competency" })
+    .populate({ path: "competenciesAndSkills.skills" })
     .exec((err, role) => {
       if (err) {
         console.log(err);
@@ -101,9 +105,24 @@ router.get("/:id", (req, res) => {
     });
 });
 //Edit
-router.get("/:id/edit", (req, res) => res.send("This is the Roles EDIT route"));
+router.get("/:id/edit", (req, res) => {
+  Role.findById(req.params.id)
+    .populate({ path: "competenciesAndSkills.competency" })
+    .populate({ path: "competenciesAndSkills.skills" })
+    .exec((err, role) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("roles/edit", { role: role });
+      }
+    });
+});
 //Update
-router.put("/:id", (req, res) => res.send("This is the Roles UPDATE route"));
+//I'll probably need to write a new function that returns skill/ competency objects to add to arrays/competencies. 
+//That's something I do a lot already, and something I will need again at all of these update routes.
+router.put("/:id", (req, res) => {
+  
+  res.send("This is the Roles UPDATE route")});
 //Destroy
 router.delete("/:id", (req, res) =>
   res.send("This is the Roles DESTROY route")

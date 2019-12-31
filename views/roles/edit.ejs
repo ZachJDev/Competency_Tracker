@@ -1,0 +1,23 @@
+<form action="/roles/<%=role._id%>?_method=PUT" method="PUT">
+    <div>
+        <input type="text" name="name" value="<%=role.name%>">
+    </div>
+    <div>
+        <input type="text" name="description" value="<%=role.description%>">
+    </div>
+    <div>
+        <input type="text" name="skills" placeholder="add NEW skills">
+    </div>
+
+<% role.competenciesAndSkills.forEach(competencyAndSkills => { %>
+    <h2> <%=competencyAndSkills.competency.number %>: <%=competencyAndSkills.competency.name%> </h2>
+    <%competencyAndSkills.skills.forEach(skill => { %>
+        <h3><%=competencyAndSkills.competency.number%>.<%=skill.number%>: <%=skill.name%></h3>
+        <p><%=skill.description%></p>
+    <%})%>
+<%});%>
+
+<div>
+        <button>Submit!</button>
+    </div>
+</form>

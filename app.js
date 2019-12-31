@@ -7,13 +7,12 @@ const express = require("express"),
   port = 5500;
 
 const Skill = require("./models/Skill"),
- Competency = require("./models/Competency"),
+  Competency = require("./models/Competency"),
   DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
   Role = require("./models/Role"),
   seedDB = require("./seedDb");
 
-app.use(methodOverride('_method'))
-
+app.use(methodOverride("_method"));
 
 app.use(bodyParser.urlencoded({ extended: true })); //This has to be BEFORE the routes.
 //routes
@@ -25,6 +24,7 @@ const competencyRoutes = require("./routes/Competencies"),
 
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
+//I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
 mongoose.connect("mongodb://localhost/CompetencyTracker", {
   useNewUrlParser: true,
   useUnifiedTopology: true
