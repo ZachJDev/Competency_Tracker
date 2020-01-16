@@ -1,8 +1,17 @@
 <h1>Hello!</h1>
 <div>
     <%roles.forEach((role) => { %>
-        <a href="/roles/<%=role._id%>"><h4><%=role.name%></h4></a> <a href="/roles/<%=role._id%>/edit">edit</a>
-        <p><%= role.competenciesAndSkills%></p>
+        <a href="/roles/<%=role._id%>"><h4><%=role.name%></a> <a href="/roles/<%=role._id%>/edit">edit</a> </h4>
+        <p><%=role.description %></p>
+       <%role.competenciesAndSkills.forEach((competency) => { %>
+           <p><%=competency.competency.number%><%=competency.competency.name %></p>
+           <%competency.skills.forEach((skill) => { %>
+                <p><%=skill.number%> <%=skill.name %> </p>
+                <%skill.subSkills.forEach((subSkill) => { %>
+                    <p><%=subSkill.number %><%=subSkill.name %></p>
+                <%}) %>
+            <%});%>
+      <% }); %>
     <%})%>
     <a href="/roles/new">add new role</a>
 </div>

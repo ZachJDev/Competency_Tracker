@@ -29,7 +29,7 @@ mongoose.connect("mongodb://localhost/CompetencyTracker", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
-seedDB();
+// seedDB();
 
 //express setup
 app.use("/", indexRoutes);

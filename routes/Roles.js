@@ -26,9 +26,43 @@ function createSkillsMap(skills) {
   });
   return skillsMap;
 }
+async function findCompetencyIds(skillsObj) {
+  //I'm about to do something terrible to this function.
+  const skillKeys = Object.keys(skillsObj);
+  keysAsNums = skillKeys.map(key => Number(key));
+  let compArray = Promise.all(
+    keysAsNums.map(async key => {
+      const comp = await Competency.findOne({ number: key });
+      skillsObj[comp._id] = skillsObj[key]; // obviously not the best practice. but I want to update this object as well as have an array of competecny ids, and this is the least confusing way that I can figure out how to do it.
+      delete skillsObj[key];
+      return comp._id;
+    })
+  );
+  const result = await compArray;
+  return result;
+}
 
-
-
+async function findSkillIds(skillsObj, competencies) {
+  let compsAndSkills = {};
+  for (let i = 0; i < competencies.length; i++) {
+    const competencyId = competencies[i];
+    const compLookup = Competency.findById(competencyId).populate("skills");
+    await compLookup.then(competency => {
+      skillsObj[competencyId].forEach((element, i) => {
+        if (element == 0) {
+          compsAndSkills[competencyId] = [...competency.skills];
+        } else {
+          index = competency.skills.findIndex(skill => skill.number == element);
+          if (!compsAndSkills[competencyId]) {
+            compsAndSkills[competencyId] = [];
+          }
+          compsAndSkills[competencyId].push(competency.skills[index]);
+        }
+      });
+    });
+  }
+  return compsAndSkills;
+}
 //roles routes. uses "/roles"
 //index
 router.get("/", (req, res) => {
@@ -52,9 +86,10 @@ router.post("/", (req, res) => {
   const roleName = req.body.name;
   const roleDescription = req.body.description;
   try {
+    let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
+
     Role.create({ name: roleName, description: roleDescription })
       .then(role => {
-        let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
         let skillKeys = Object.keys(skillsObj);
         let newSkillsArray = [];
         skillKeys.forEach(key => {
@@ -73,8 +108,6 @@ router.post("/", (req, res) => {
                   newSkillsArray.push(competency.skills[index]);
                 }
               });
-              console.log(competency._id);
-              console.log(newSkillsArray);
               role.competenciesAndSkills.push({
                 competency: competency._id,
                 skills: [...newSkillsArray]
@@ -118,11 +151,48 @@ router.get("/:id/edit", (req, res) => {
     });
 });
 //Update
-//I'll probably need to write a new function that returns skill/ competency objects to add to arrays/competencies. 
+//I'll probably need to write a new function that returns skill/competency objects to add to arrays/competencies.
 //That's something I do a lot already, and something I will need again at all of these update routes.
 router.put("/:id", (req, res) => {
+  try {
+    const skillsObj = createSkillsMap(req.body.skills);
+    findCompetencyIds(skillsObj).then(result => {
+      findSkillIds(skillsObj, result).then(ids => {
+        Role.findById(req.params.id).then(role => {
+          result.forEach(comp => {
+            //at some point in here, I should check if the comps/skills are already a part of the role
+            let competencyIndex = role.competenciesAndSkills.findIndex(
+              element => String(element.competency) == String(comp)
+            );
+            if (competencyIndex != -1) {
+              // if the competency is already a part of the role
+              ids[comp].forEach((skill, index) => {
+                let skillId = role.competenciesAndSkills[
+                  competencyIndex
+                ].skills.findIndex(element => 
+                  String(element._id) == String(skill._id));
+                console.log(skillId)
+                if (skillId == -1) {
+                  role.competenciesAndSkills[competencyIndex].skills.push(
+                    skill
+                  );
+                } 
+              });
+            } else {
+              role.competenciesAndSkills.push({
+                competency: comp,
+                skills: [...ids[comp]]
+              });
+            }
+          });
+          role.save().then(res.redirect(`${req.params.id}/edit`));
+        });
+      });
+    });
+  } catch (error) {}
+
   
-  res.send("This is the Roles UPDATE route")});
+});
 //Destroy
 router.delete("/:id", (req, res) =>
   res.send("This is the Roles DESTROY route")
