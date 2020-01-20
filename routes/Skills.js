@@ -74,15 +74,31 @@ router.delete("/:skill_id", (req, res) => {
       deletedSkills.sort((a, b) => a - b); // this should always put the lowest number in the first position.
       skillIndex = competency.skills.indexOf(req.params.skill_id);
       competency.skills.splice(skillIndex, 1);
-      competency.save().then(Role.find({ competenciesAndSkills: { $elemMatch: { skills: req.params.skill_id } } }).then(roles => {
-        console.log(roles);
-        roles.forEach(role => {
-          removalIndex = role.competenciesAndSkills.skills.indexOf(req.params.skill_id);
-          role.competenciesAndSkills.skills.splice(removalIndex, 1);
+      competency.save().then(
+        Role.find({
+          competenciesAndSkills: { $elemMatch: { skills: req.params.skill_id } }
         })
-        res.redirect("/competencies")
-      }
-      ));
+          .populate({ path: "competenciesAndSkills.competency" })
+          .populate({ path: "competenciesAndSkills.skills" })
+          .then(roles => {
+            console.log(roles);
+            roles.forEach(role => {
+              role.competenciesAndSkills.forEach((foundCompetency, index) => {
+                if (foundCompetency.competency.name == competency.name) {
+                  console.log(role.competenciesAndSkills[index]);
+                  console.log(role.competenciesAndSkills[index].skills)
+                  removalIndex = role.competenciesAndSkills[
+                    index
+                  ].skills.findIndex(element => element.name == skill.name);
+
+                  role.competenciesAndSkills[index].skills.splice(removalIndex, 1);
+                  role.save();
+                }
+              });
+            });
+            res.redirect("/competencies");
+          })
+      );
     });
   });
 });
