@@ -4,74 +4,98 @@ const express = require("express"),
   Competency = require("../models/Competency.js");
 
 /* This whole function could use some TLC*/
+//I really want to come back to this; it's VERY error-prone.
 /* This function creates an object, where each key is a competency and each value is an array of specific skills. if 
 a competency is added by itself, then the array will be a 0, and that will eventually tell the application to add all
 skills from that competency.*/
+function objectKeysToNumbers(object) {
+  return Object.keys(object).map(key => Number(key));
+}
+function newObjectFromKeys(object, typeForValue = "none") {
+  const typeDict = {
+    array: [],
+    string: "",
+    number: 0,
+    object: {},
+    none: null
+  };
+  const defaultType = typeDict[typeForValue];
+  let newObject = {};
+  let keys = Object.keys(object);
+  for (key of keys) {
+    newObject[key] = defaultType;
+  }
+  return newObject;
+}
 function createSkillsMap(skills) {
-  skillsMap = {};
+  let competenciesAndSkills = {};
+  let skillsArray = [];
   skills = skills.split(",");
   skills.forEach(skill => {
-    if (!/[1-9]\.[1-9]/g.test(skill) && !/[1-9]$/g.test(skill)) {
-      throw Error(`Regular Expression Test Failed for ${skill}`);
-    }
-    //I really feel like the next 4 lines could be combined into one.
-    if (!skillsMap[skill[0]]) {
-      skillsMap[skill[0]] = [];
-    }
-    // It probably would work to just always push skill[2] and accept the undefined
-    // but for now, I like the 0 instead. It's reassuring to work with a known value.
-    skill[2]
-      ? skillsMap[skill[0]].push(Number(skill[2]))
-      : skillsMap[skill[0]].push(0);
+    splitSkills = skill.split("."); //this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
+    skillsArray.push(splitSkills);
   });
-  return skillsMap;
+  for (skill of skillsArray) {
+    if (isNaN(skill[0])) continue;
+    if (!competenciesAndSkills[skill[0]]) competenciesAndSkills[skill[0]] = [];
+    if (skill[1] === undefined) competenciesAndSkills[skill[0]].push(0);
+    //zero to keep NaNs out of my code. this will end up just pushing every skill.
+    else {
+      competenciesAndSkills[skill[0]].push(Number(skill[1]));
+    }
+  }
+  return competenciesAndSkills;
 }
 async function findCompetencyIds(skillsObj) {
-  //I'm about to do something terrible to this function.
-  const skillKeys = Object.keys(skillsObj);
-  keysAsNums = skillKeys.map(key => Number(key));
-  let compArray = Promise.all(
-    keysAsNums.map(async key => {
-      const comp = await Competency.findOne({ number: key });
-      skillsObj[comp._id] = skillsObj[key]; // obviously not the best practice. but I want to update this object as well as have an array of competecny ids, and this is the least confusing way that I can figure out how to do it.
-      delete skillsObj[key];
-      return comp._id;
-    })
-  );
-  const result = await compArray;
-  return result;
+  let competencyIdsAndSkillNumbers = {};
+  let competencyNumbers = objectKeysToNumbers(skillsObj);
+  let promises = [];
+  for (number of competencyNumbers) {
+    promises.push(Competency.findOne({ number: number }, { number: 1 }));
+  }
+  const result = await Promise.all(promises);
+  for (el of result) {
+    if (el === null) continue;
+    competencyIdsAndSkillNumbers[el._id] = skillsObj[el.number];
+  }
+  return competencyIdsAndSkillNumbers;
 }
 
-async function findSkillIds(skillsObj, competencies) {
-  let compsAndSkills = {};
-  for (let i = 0; i < competencies.length; i++) {
-    const competencyId = competencies[i];
-    const compLookup = Competency.findById(competencyId).populate("skills");
-    await compLookup.then(competency => {
-      skillsObj[competencyId].forEach((element, i) => {
-        if (element == 0) {
-          compsAndSkills[competencyId] = [...competency.skills];
-        } else {
-          index = competency.skills.findIndex(skill => skill.number == element);
-          if (!compsAndSkills[competencyId]) {
-            compsAndSkills[competencyId] = [];
-          }
-          compsAndSkills[competencyId].push(competency.skills[index]);
-        }
-      });
-    });
+
+//this is insane. I'm literally just pushing this to document such strange behavior.
+
+function findSkillIds(competenciesAndSkills) {
+  let justCompetencyIds = Object.keys(competenciesAndSkills);
+  let newCompetenciesObject = newObjectFromKeys(competenciesAndSkills, "array");
+  let promises = [];
+  for (let id of justCompetencyIds) {
+    promises.push(Competency.findById(id).populate("skills"));
   }
-  return compsAndSkills;
+  Promise.all(promises).then(comps => {
+    console.log(newCompetenciesObject)
+    let count = 1
+    for (let id of justCompetencyIds) {
+      let helper = comps.filter(el => el._id == id);
+      let comp = helper[0];
+      for (let skillNumber of competenciesAndSkills[id]) {
+        skill = comp.skills.filter(el => el.number == skillNumber);
+        newCompetenciesObject[id].push(...skill);
+        count++
+        // console.log(newCompetenciesObject[id])
+      }
+    }
+    console.log(newCompetenciesObject);
+  });
 }
 //roles routes. uses "/roles"
 //index
 router.get("/", (req, res) => {
-  Role.find({})
+  Role.find({}) //I'll need stuff here once I implemenent different institutions and users
     .populate({ path: "competenciesAndSkills.competency" })
     .populate({ path: "competenciesAndSkills.skills" })
     .exec((err, allRoles) => {
       if (err) {
-        console.log(err);
+        res.send("OOPS!"); // fix error handling
       } else {
         res.render("roles/index", { roles: allRoles });
       }
@@ -79,7 +103,12 @@ router.get("/", (req, res) => {
 });
 //New
 router.get("/new", (req, res) => {
-  res.render("roles/new", { name: false, description: false }); //as to not mess up the ejs when opening the form for the first time. This would probably be better handled with cookies, but I don't know how to use those yet.
+  try {
+    res.render("roles/new", { name: false, description: false });
+  } catch (err) {
+    //as to not mess up the ejs when opening the form for the first time. This would probably be better handled with cookies, but I don't know how to use those yet.
+    res.send("OOPS!"); // fix error handling
+  }
 });
 //Create
 router.post("/", (req, res) => {
@@ -87,36 +116,43 @@ router.post("/", (req, res) => {
   const roleDescription = req.body.description;
   try {
     let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
+    findCompetencyIds(skillsObj).then(result => {
+      findSkillIds(result);
+    });
 
-    Role.create({ name: roleName, description: roleDescription })
-      .then(role => {
-        let skillKeys = Object.keys(skillsObj);
-        let newSkillsArray = [];
-        skillKeys.forEach(key => {
-          //I need to rewrite ths and and the below forEach as traditioal For loops.
-          const keyAsNum = Number(key);
-          Competency.findOne({ number: keyAsNum })
-            .populate("skills")
-            .then(competency => {
-              skillsObj[key].forEach(el => {
-                if (el == 0) {
-                  newSkillsArray.push(...competency.skills);
-                } else {
-                  index = competency.skills.findIndex(
-                    element => element.number == el
-                  );
-                  newSkillsArray.push(competency.skills[index]);
-                }
-              });
-              role.competenciesAndSkills.push({
-                competency: competency._id,
-                skills: [...newSkillsArray]
-              });
-              role.save();
-            });
-        });
-      })
-      .then(setTimeout(() => res.redirect("/roles"), 0));
+    // the next step will be to create an object that I can push by itself onto the new Role.
+    // console.log(skillsObj)
+    //     Role.create({ name: roleName, description: roleDescription })
+    //       .then(role => {
+    //         let skillKeys = Object.keys(skillsObj);
+    //         let newSkillsArray = [];
+    //         skillKeys.forEach(key => {
+    //           //I need to rewrite ths and and the below forEach as traditioal For loops.
+    //           const keyAsNum = Number(key);
+    //           Competency.findOne({ number: keyAsNum })
+    //             .populate("skills")
+    //             .then(competency => {
+    //               skillsObj[key].forEach(el => {
+    //                 if (el == 0) {
+    //                   newSkillsArray.push(...competency.skills);
+    //                 } else {
+    //                   index = competency.skills.findIndex(
+    //                     element => element.number == el
+    //                   );
+    //                   newSkillsArray.push(competency.skills[index]);
+    //                 }
+    //               });
+    //               role.competenciesAndSkills.push({
+    //                 competency: competency._id,
+    //                 skills: [...newSkillsArray]
+    //               });
+    //               role.save();
+    //             });
+    //         });
+    //       }).catch(err => {
+    //         res.send(err)
+    //       })
+    //       .then(setTimeout(() => res.redirect("/roles"), 0));
   } catch (error) {
     console.log("Error When Creating Role");
     console.log(error);
@@ -131,7 +167,7 @@ router.get("/:id", (req, res) => {
     .populate({ path: "competenciesAndSkills.skills" })
     .exec((err, role) => {
       if (err) {
-        console.log(err);
+        res.send("OOPS!"); // fix error handling;
       } else {
         res.render("roles/show", { role: role });
       }
@@ -158,44 +194,63 @@ router.put("/:id", (req, res) => {
     const skillsObj = createSkillsMap(req.body.skills);
     findCompetencyIds(skillsObj).then(result => {
       findSkillIds(skillsObj, result).then(ids => {
-        Role.findById(req.params.id).then(role => {
-          result.forEach(comp => {
-            //at some point in here, I should check if the comps/skills are already a part of the role
-            let competencyIndex = role.competenciesAndSkills.findIndex(
-              element => String(element.competency) == String(comp)
-            );
-            if (competencyIndex != -1) {
-              // if the competency is already a part of the role
-              ids[comp].forEach((skill, index) => {
-                let skillId = role.competenciesAndSkills[
-                  competencyIndex
-                ].skills.findIndex(element => 
-                  String(element._id) == String(skill._id));
-                console.log(skillId)
-                if (skillId == -1) {
-                  role.competenciesAndSkills[competencyIndex].skills.push(
-                    skill
+        Role.findById(req.params.id)
+          .then(role => {
+            result.forEach(comp => {
+              //at some point in here, I should check if the comps/skills are already a part of the role
+              let competencyIndex = role.competenciesAndSkills.findIndex(
+                element => String(element.competency) == String(comp)
+              );
+              if (competencyIndex != -1) {
+                // if the competency is already a part of the role
+                ids[comp].forEach((skill, index) => {
+                  let skillId = role.competenciesAndSkills[
+                    competencyIndex
+                  ].skills.findIndex(
+                    element => String(element._id) == String(skill._id)
                   );
-                } 
+                  console.log(skillId);
+                  if (skillId == -1) {
+                    role.competenciesAndSkills[competencyIndex].skills.push(
+                      skill
+                    );
+                  }
+                });
+              } else {
+                role.competenciesAndSkills.push({
+                  competency: comp,
+                  skills: [...ids[comp]]
+                });
+              }
+            });
+            role
+              .save()
+              .then(res.redirect(`${req.params.id}/edit`))
+              .catch(err => {
+                res.send("OOPS!"); // fix error handling
               });
-            } else {
-              role.competenciesAndSkills.push({
-                competency: comp,
-                skills: [...ids[comp]]
-              });
-            }
+          })
+          .catch(err => {
+            res.send("OOPS!"); // fix error handling
           });
-          role.save().then(res.redirect(`${req.params.id}/edit`));
-        });
       });
     });
-  } catch (error) {}
-
-  
+  } catch (error) {
+    res.send("OOPS!"); // fix error handling
+  }
 });
 //Destroy
-router.delete("/:id", (req, res) =>
-  res.send("This is the Roles DESTROY route")
-);
+router.delete("/:id", (req, res) => {
+  Role.findByIdAndDelete(req.params.id)
+    .then((err, fail) => {
+      if (err) {
+        throw new error();
+      }
+      res.redirect("/roles");
+    })
+    .catch(err => {
+      res.send("asdfsdf"); //fix error handling
+    });
+});
 
 module.exports = router;
