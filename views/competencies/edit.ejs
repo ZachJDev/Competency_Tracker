@@ -1,0 +1,22 @@
+<form action="/competencies/<%= competency._id %>?_method=PUT " method=POST>
+    <div>
+      <label for="number">Competency Number:</label><input type="number"
+      name="number" value = <%=competency.number%> readonly>
+    </div>
+    <div>
+      <label for="competencyName">Competency Name:</label
+      ><input type="text" name="competencyName" value = <%= competency.name %>  />
+    </div>
+    <div>
+      <label for="description">Competency Description:</label>
+      <input
+        type="text"
+        name="description"
+        value = <%= competency.description %> 
+      />
+    </div>
+    <div>
+      <button>Submit!</button>
+    </div>
+  </form>
+  

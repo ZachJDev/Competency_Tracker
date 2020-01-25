@@ -1,7 +1,7 @@
 <h1>Hello from the competencies!</h1>
 <ul>
   <% if(!!Competencies) { %> <%Competencies.forEach(competency => { %>
-  <li><h2><%=competency.number%>: <%= competency.name %></h2></li>
+  <li><a href="/competencies/<%= competency._id %> "><h2><%=competency.number%>: <%= competency.name %></h2></a></li>
     <ul>
       <%competency.skills.forEach(skill => { %>
       <li><h3><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3><form method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"> <button>delete</button> </form></li>

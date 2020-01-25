@@ -11,22 +11,7 @@ skills from that competency.*/
 function objectKeysToNumbers(object) {
   return Object.keys(object).map(key => Number(key));
 }
-function newObjectFromKeys(object, typeForValue = "none") {
-  const typeDict = {
-    array: [],
-    string: "",
-    number: 0,
-    object: {},
-    none: null
-  };
-  const defaultType = typeDict[typeForValue];
-  let newObject = {};
-  let keys = Object.keys(object);
-  for (key of keys) {
-    newObject[key] = defaultType;
-  }
-  return newObject;
-}
+
 function createSkillsMap(skills) {
   let competenciesAndSkills = {};
   let skillsArray = [];
@@ -61,31 +46,33 @@ async function findCompetencyIds(skillsObj) {
   return competencyIdsAndSkillNumbers;
 }
 
-
-//this is insane. I'm literally just pushing this to document such strange behavior.
-
-function findSkillIds(competenciesAndSkills) {
+async function findSkillIds(competenciesAndSkills) {
   let justCompetencyIds = Object.keys(competenciesAndSkills);
-  let newCompetenciesObject = newObjectFromKeys(competenciesAndSkills, "array");
+  let newCompetenciesObject = {};
   let promises = [];
   for (let id of justCompetencyIds) {
     promises.push(Competency.findById(id).populate("skills"));
   }
-  Promise.all(promises).then(comps => {
-    console.log(newCompetenciesObject)
-    let count = 1
-    for (let id of justCompetencyIds) {
-      let helper = comps.filter(el => el._id == id);
-      let comp = helper[0];
-      for (let skillNumber of competenciesAndSkills[id]) {
-        skill = comp.skills.filter(el => el.number == skillNumber);
-        newCompetenciesObject[id].push(...skill);
-        count++
-        // console.log(newCompetenciesObject[id])
-      }
+  const comps = await Promise.all(promises);
+  for (let id of justCompetencyIds) {
+    let helper = comps.filter(el => el._id == id);
+    let comp = helper[0];
+    for (let skillNumber of competenciesAndSkills[id]) {
+      skill = comp.skills.filter(el => el.number == skillNumber);
+      if (!newCompetenciesObject[id]) newCompetenciesObject[id] = [];
+      newCompetenciesObject[id].push(...skill);
     }
-    console.log(newCompetenciesObject);
-  });
+  }
+  return newCompetenciesObject;
+}
+function makeArrayForModel (competenciesAndSkills) {
+  let keys = Object.keys(competenciesAndSkills);
+  let newArray = [];
+  keys.forEach(key => {
+    let compsObject = {competency: key, skills: competenciesAndSkills[key]}
+    newArray.push(compsObject);
+  })
+  return newArray
 }
 //roles routes. uses "/roles"
 //index
@@ -117,42 +104,15 @@ router.post("/", (req, res) => {
   try {
     let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
     findCompetencyIds(skillsObj).then(result => {
-      findSkillIds(result);
+      let comps = findSkillIds(result);
+      comps.then(compsAndSkills => {
+        let la = makeArrayForModel(compsAndSkills);
+        console.log(la);
+        Role.create({name: roleName, description: roleDescription, competenciesAndSkills: la}).then(res.redirect("/competencies"))
+      });
     });
 
-    // the next step will be to create an object that I can push by itself onto the new Role.
-    // console.log(skillsObj)
-    //     Role.create({ name: roleName, description: roleDescription })
-    //       .then(role => {
-    //         let skillKeys = Object.keys(skillsObj);
-    //         let newSkillsArray = [];
-    //         skillKeys.forEach(key => {
-    //           //I need to rewrite ths and and the below forEach as traditioal For loops.
-    //           const keyAsNum = Number(key);
-    //           Competency.findOne({ number: keyAsNum })
-    //             .populate("skills")
-    //             .then(competency => {
-    //               skillsObj[key].forEach(el => {
-    //                 if (el == 0) {
-    //                   newSkillsArray.push(...competency.skills);
-    //                 } else {
-    //                   index = competency.skills.findIndex(
-    //                     element => element.number == el
-    //                   );
-    //                   newSkillsArray.push(competency.skills[index]);
-    //                 }
-    //               });
-    //               role.competenciesAndSkills.push({
-    //                 competency: competency._id,
-    //                 skills: [...newSkillsArray]
-    //               });
-    //               role.save();
-    //             });
-    //         });
-    //       }).catch(err => {
-    //         res.send(err)
-    //       })
-    //       .then(setTimeout(() => res.redirect("/roles"), 0));
+ 
   } catch (error) {
     console.log("Error When Creating Role");
     console.log(error);

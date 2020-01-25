@@ -1,0 +1,8 @@
+<h4>Welcome to the show page for <%=competency.name %></h4>
+<div><h5>skills:</h5>
+<ul>
+<%competency.skills.forEach(skill => { %>
+<li><%= skill.name %> </li>
+<% })%>
+</ul>
+</div>
