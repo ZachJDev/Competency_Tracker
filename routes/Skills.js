@@ -54,7 +54,7 @@ router.post("/", (req, res) => {
       { $push: { skills: skill } },
       { useFindAndModify: false }
     )
-      .then(res.redirect("/competencies"))
+      .then(res.redirect("/competencies/" + req.params.id))
       .catch(err => {
         res.send("OOPS!"); // fix error handling
       });
@@ -80,7 +80,7 @@ router.put("/:skill_id", (req, res) =>
     { $set: { name: req.body.name } },
     { useFindAndModify: false }
   )
-    .then(res.redirect("/competencies"))
+    .then(res.redirect("/competencies/" + req.params.id))
     .catch(err => {
       res.send("OOPS!");
     })
@@ -94,44 +94,50 @@ router.delete("/:skill_id", (req, res) => {
   Skill.findById(req.params.skill_id)
     .then(skill => {
       skillNumber = skill.number;
+      console.log(skillNumber);
       Competency.findByIdAndUpdate(
         req.params.id,
-        { $pull: { skills: skill._id }, $push: {deletedSkills: {$each:[ skillNumber], $sort: 1}}},
+        {
+          $pull: { skills: skill._id },
+          $push: { deletedSkills: { $each: [skillNumber], $sort: 1} }
+        },
         { useFindAndModify: false }
+      ).then(competency => {
+        competency.save()
+      });
+      Role.updateMany(
+        {
+          competenciesAndSkills: {
+            $elemMatch: { skills: req.params.skill_id }
+          }
+        },
+        {
+          $pull: {
+            "competenciesAndskills.$[Skills].$": req.params.skill_id } 
+        },
+        { useFindAndModify: false,
+        arrayFilters: {skills: req.params._id} }
       )
-          Role.updateMany(
-            {
-              competenciesAndSkills: {
-                $elemMatch: { skills: req.params.skill_id }
-              }
-            },
-            {
-              $pull: {
-                competenciesAndSkills: {
-                  skills: { _id: req.params.skill_id }
-                }
-              }
-            }
-          )
-            .then(
-              Skill.findByIdAndRemove(req.params.skill_id)
-                .then(res.redirect("/competencies"))
-                .catch(err => {
-                  console.log(5)
-                  res.send(err); // fix error handling
-                })
-            )
+        .then( result => {
+          console.log(result)
+          Skill.findByIdAndRemove(req.params.skill_id)
+            .then(res.redirect("/competencies"))
             .catch(err => {
-              console.log(4)
+              console.log(err);
               res.send(err); // fix error handling
             })
-            .catch(err => {
-              console.log(3)
-              res.send(err); // fix error handling
-            });
+          })
+        .catch(err => {
+          console.log(err);
+          res.send(err); // fix error handling
+        })
+        .catch(err => {
+          console.log(err);
+          res.send(err); // fix error handling
+        });
     })
     .catch(err => {
-      console.log(1)
+      console.log(err);
       res.send(err); // fix error handling
     });
 });

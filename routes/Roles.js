@@ -27,10 +27,12 @@ function createSkillsMap(skills) {
     //zero to keep NaNs out of my code. this will end up just pushing every skill.
     else {
       competenciesAndSkills[skill[0]].push(Number(skill[1]));
+      competenciesAndSkills[skill[0]].sort((a, b) => a - b);
     }
   }
   return competenciesAndSkills;
 }
+
 async function findCompetencyIds(skillsObj) {
   let competencyIdsAndSkillNumbers = {};
   let competencyNumbers = objectKeysToNumbers(skillsObj);
@@ -58,21 +60,26 @@ async function findSkillIds(competenciesAndSkills) {
     let helper = comps.filter(el => el._id == id);
     let comp = helper[0];
     for (let skillNumber of competenciesAndSkills[id]) {
-      skill = comp.skills.filter(el => el.number == skillNumber);
+      if (skillNumber === 0) {
+        skill = comp.skills.map(el => el._id);
+      } else {
+        skill = comp.skills.filter(el => el.number == skillNumber);
+      }
       if (!newCompetenciesObject[id]) newCompetenciesObject[id] = [];
       newCompetenciesObject[id].push(...skill);
     }
   }
   return newCompetenciesObject;
 }
-function makeArrayForModel (competenciesAndSkills) {
+
+function makeArrayForModel(competenciesAndSkills) {
   let keys = Object.keys(competenciesAndSkills);
   let newArray = [];
   keys.forEach(key => {
-    let compsObject = {competency: key, skills: competenciesAndSkills[key]}
+    let compsObject = { competency: key, skills: competenciesAndSkills[key] };
     newArray.push(compsObject);
-  })
-  return newArray
+  });
+  return newArray;
 }
 //roles routes. uses "/roles"
 //index
@@ -82,7 +89,7 @@ router.get("/", (req, res) => {
     .populate({ path: "competenciesAndSkills.skills" })
     .exec((err, allRoles) => {
       if (err) {
-        res.send("OOPS!"); // fix error handling
+        res.send(err); // fix error handling
       } else {
         res.render("roles/index", { roles: allRoles });
       }
@@ -106,13 +113,14 @@ router.post("/", (req, res) => {
     findCompetencyIds(skillsObj).then(result => {
       let comps = findSkillIds(result);
       comps.then(compsAndSkills => {
-        let la = makeArrayForModel(compsAndSkills);
-        console.log(la);
-        Role.create({name: roleName, description: roleDescription, competenciesAndSkills: la}).then(res.redirect("/competencies"))
+        let la = makeArrayForModel(compsAndSkills); //bad variable name
+        Role.create({
+          name: roleName,
+          description: roleDescription,
+          competenciesAndSkills: la
+        }).then(res.redirect("/roles"));
       });
     });
-
- 
   } catch (error) {
     console.log("Error When Creating Role");
     console.log(error);
@@ -169,7 +177,6 @@ router.put("/:id", (req, res) => {
                   ].skills.findIndex(
                     element => String(element._id) == String(skill._id)
                   );
-                  console.log(skillId);
                   if (skillId == -1) {
                     role.competenciesAndSkills[competencyIndex].skills.push(
                       skill

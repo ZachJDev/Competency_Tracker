@@ -38,5 +38,6 @@ app.use("/competencies", competencyRoutes);
 app.use("/competencies/:id/skills", skillRoutes);
 app.use("/competencies/:id/skills/:skill_id/subskills", subSkillRoutes);
 app.set("view engine", "ejs");
-
+app.use(express.static(__dirname + '\\public'));
+console.log(__dirname + "\\public")
 app.listen(port, () => console.log("server up"));

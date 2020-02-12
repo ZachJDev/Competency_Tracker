@@ -20,11 +20,16 @@ router.get("/", (req, res) => {
 });
 //New
 router.get("/new", (req, res) => {
-DeletedCompetencyCounter.findOneAndUpdate({}, {$setOnInsert: {count: []}}, {upsert: true, sort: {count: -1}, useFindAndModify: false}, (err, element) => {
-  console.log(element + " First  Pass")
-}) //something that I don't understand is going on here.... for whatever reason, element below in the then() block will be null if I don't have this callback in here. when I have the callback above, it will return null in callback, but the document I want with the then() function. This only happens on the first call, so I think there must be something about the find() and update() operations returning different promises? I'm not sure....
-    .then((element) => {
-      console.log(element)
+  DeletedCompetencyCounter.findOneAndUpdate(
+    {},
+    { $setOnInsert: { count: [] } },
+    { upsert: true, sort: { count: -1 }, useFindAndModify: false },
+    (err, element) => {
+      console.log(element + " First  Pass");
+    }
+  ) //something that I don't understand is going on here.... for whatever reason, element below in the then() block will be null if I don't have this callback in here. when I have the callback above, it will return null in callback, but the document I want with the then() function. This only happens on the first call, so I think there must be something about the find() and update() operations returning different promises? I'm not sure....
+    .then(element => {
+      console.log(element);
       if (!!element.count.length) {
         // console.log(element)
         let number = element.count.shift();
@@ -42,7 +47,7 @@ DeletedCompetencyCounter.findOneAndUpdate({}, {$setOnInsert: {count: []}}, {upse
           res.send("OOPS!"); // fix error handling
         });
       }
-    })
+    });
 }); //if anyone comes and sees this code and the comment previously here, I was wrong. mongoose queries are NOT promises.
 
 //Create
@@ -86,11 +91,11 @@ router.put("/:id", (req, res) => {
   console.log(req.body.competencyName);
   Competency.findByIdAndUpdate(req.params.id, {
     $set: { name: req.body.competencyName, description: req.body.description }
-  }).then(
-    res.redirect("/competencies").catch(err => {
+  })
+    .then(res.redirect("/competencies"))
+    .catch(err => {
       res.send("OOPS!"); // fix error handling
-    })
-  );
+    });
 });
 //Destroy
 //I still need to add the deleted competency to the counter
@@ -102,17 +107,40 @@ router.delete("/:id", (req, res) => {
         promises.push(Skill.findByIdAndDelete(competency.skills[i]));
       }
       promises.push(
-        DeletedCompetencyCounter.findOneAndUpdate({},  {$push: {count: {$each: [competency.number], $sort: 1}}}, {upsert: true}) // redundant with the create route, but if there's some circumstance where the counter doesn't get created when the first competency does, this should hopefully catch it
+        DeletedCompetencyCounter.findOneAndUpdate(
+          {},
+          { $push: { count: { $each: [competency.number], $sort: 1 } } },
+          { upsert: true }
+        ) // redundant with the create route, but if there's some circumstance where the counter doesn't get created when the first competency does, this should hopefully catch it
       );
-      Promise.all(promises).then(
-        Competency.findByIdAndDelete(req.params.id)
-          .then(res.redirect("/competencies"))
-          .catch(err => {
-            res.send("OOPS!"); // fix error handling
-          })
-      );
+      Role.updateMany(
+        {
+          competenciesAndSkills: {
+            $elemMatch: { competency: req.params.id }
+          }
+        },
+        {
+          $pull: {
+            competenciesAndSkills: { competency: req.params.id }
+          }
+        },
+        { useFindAndModify: false }
+      )
+        .then(result => {
+          console.log(result);
+          Promise.all(promises);
+        })
+        .then(
+          Competency.findByIdAndDelete(req.params.id)
+            .then(res.redirect("/competencies"))
+            .catch(err => {
+              console.log(err);
+              res.send("OOPS!"); // fix error handling
+            })
+        );
     })
     .catch(err => {
+      console.log(err);
       res.send("OOPS!"); // fix error handling
     });
 });

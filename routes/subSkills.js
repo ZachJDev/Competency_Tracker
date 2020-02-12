@@ -61,24 +61,24 @@ router.post("/", (req, res) => {
           if (newSubSkill.number < subSkills[0].number) {
             //insert at front
             skill.subSkills.splice(0, 0, newSubSkill);
-            skill.save().then(res.redirect("/competencies"));
+            skill.save().then(res.redirect("/competencies/" + req.params.id));
           } else if (
             newSubSkill.number > subSkills[subSkills.length - 1].number
           ) {
             //insert at back (combine with the outer else?)
             skill.subSkills.push(newSubSkill);
-            skill.save().then(res.redirect("/competencies"));
+            skill.save().then(res.redirect("/competencies/" + req.params.id));
           } else {
             //insert in the middle
             const newIndex = findInsertionIndex(newSubSkill.number, subSkills);
             skill.subSkills.splice(newIndex, 0, newSubSkill);
             console.log(skill.subSkills);
-            skill.save().then(res.redirect("/competencies"));
+            skill.save().then(res.redirect("/competencies/" + req.params.id));
           }
         } else {
           //when there are no
           skill.subSkills.push(newSubSkill);
-          skill.save().then(res.redirect("/competencies"));
+          skill.save().then(res.redirect("/competencies/" + req.params.id));
         }
       } catch (error) {
         res.send("OOPS!"); // fix error handling
@@ -115,12 +115,15 @@ router.put("/:subskill_id", (req, res) => {
   Skill.findOneAndUpdate(
     { _id: req.params.skill_id },
     { $set: { "subSkills.$[element].name": req.body.name } },
-    { arrayFilters: [{ "element._id": { $eq: req.params.subskill_id } }], useFindAndModify: false }
+    {
+      arrayFilters: [{ "element._id": { $eq: req.params.subskill_id } }],
+      useFindAndModify: false
+    }
   )
     .then(skill => res.send(skill))
     .catch(err => {
       console.log(err);
-      res.redirect("/competencies");
+      res.redirect("/competencies/" + req.params.id);
     });
 });
 //Destroy
@@ -135,12 +138,12 @@ router.delete("/:subskill_id", (req, res) => {
       skill.subSkills.splice(subSkillIndex, 1);
       skill.deletedSubSkills.push(subSkill.number);
       //I need to write a sort function that works with numbers and not strings.
-      console.log(subSkillIndex);
-      skill.save().then(
-        res.redirect("/competencies").catch(err => {
+      skill
+        .save()
+        .then(res.redirect("/competencies/" + req.params.id))
+        .catch(err => {
           res.send("OOPS!"); // fix error handling
-        })
-      );
+        });
     })
     .catch(err => {
       res.send("OOPS!"); // fix error handling
