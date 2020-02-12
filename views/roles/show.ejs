@@ -1,2 +1,42 @@
-<h4>welcome to the show page for this role!</h4>
-<p><%= role.competenciesAndSkills %></p>
+<%-include('../partials/header')%>
+<div class="body-content-show">
+    <h4 class="l-heading"><%=role.name%></h4>
+    <div class="utilities">
+        <a href="/roles/<%= role.id %>/edit" class="btn btn-primary">Edit</a>
+        <form  method=POST action="/roles/<%=role._id%>/?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this competency?')"> <button class="delete">delete</button>
+        </form>
+      </div>
+      <p class="main-info"><%= role.description %> </p>
+      <div class="role-content">
+      <div class="role-skills">
+          <h2 class="m-heading-2">Skills</h2>
+<ul>
+<% role.competenciesAndSkills.forEach(comp => { %>
+    <div class="list-items">
+        <li class="competency">
+            <h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3>
+        </li>
+        <ul class="skills-list">
+            <% comp.skills.forEach(skill => { %>
+                <li class="skill">
+                    <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %></h4>
+                </li>
+                <ul class="subskills-list">
+                    <% skill.subSkills.forEach(subskill => { %>
+                        <li class="subskill">
+                            <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>.<%=subskill.number%>: <%= subskill.name%> </h4>
+                    <% }) %> 
+                </ul>
+            <%  }) %> 
+        </ul>
+    </div>
+<%}) %> 
+
+</ul>
+</div>
+<div class="role-classes">
+    <h2 class="m-heading-2">Classes</h2>
+</div>
+</div>
+    </div>
+<%-include('../partials/footer')%>

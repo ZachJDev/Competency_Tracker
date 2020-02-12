@@ -1,19 +1,25 @@
-<h1>Hello from the competencies!</h1>
-<ul>
+<%-include('../partials/header')%>
+<div class="body-content">
+<h1 class="l-heading">All Competencies:</h1>
+<input type="text" id="search" placeholder="search...">
+<ul id="list">
   <% if(!!Competencies) { %> <%Competencies.forEach(competency => { %>
-  <li><a href="/competencies/<%= competency._id %> "><h2><%=competency.number%>: <%= competency.name %></h2></a></li>
-    <ul>
-      <%competency.skills.forEach(skill => { %>
-      <li><h3><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3><form method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"> <button>delete</button> </form></li>
-      <ul><%skill.subSkills.forEach(subSkill => { %>
-        <li><h4><%=competency.number%>.<%=skill.number%>.<%=subSkill.number%>: <%= subSkill.name%></h4><form method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/<%=subSkill._id%>?_method=DELETE"> <button>delete</button> </form></li>
-    <%})%>
-        <li><a href="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/new"> add subskill</a></li></ul>
-      <%})%>
-      <li><a href="/competencies/<%=competency._id%>/skills/new"> add skill</a></li>
-    </ul>
+    <div class="competency-and-skill list-items">
+  <li class="competency">
+    <a href="/competencies/<%= competency._id %> "><h2 class="m-heading comp-heading"><%=competency.number%>: <%= competency.name %></h2></a> 
+    <p class="description"> <%= competency.description%> </p> <i class="fas fa-chevron-down show-more"></i>
   </li>
+    <ul class="skill-list">
+      <%competency.skills.forEach(skill => { %>
+      <li class="skill">
+        <h3 class="s-heading"><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3>
+        </li>
+      <%})%>
+    </ul>
+  </div>
 <% }); %> <% } %>
 </ul>
-<a href="/competencies/new"> add new competency</a>
-
+<a class="btn btn-add" href="/competencies/new"> add new competency</a>
+</div>
+</div>
+<%-include('../partials/footer')%>

@@ -1,14 +1,27 @@
-<h1>Add skill <%=count%>: <%=competency.name%></h1>
+<%-include('../partials/header')%>
+<div class="form-whole">
+<h1 class="l-heading form-heading"> <%=competency.name%></h1>
+<h1 class="l-heading form-heading">Add New Skill</h1>
+<h2 class="m-heading form-title">Add skill <%=count%></h2>
 <form action="/competencies/<%=competency._id%>/skills" method="POST">
-  <div>
-    <label for="number">Skill Number: </label><input type="number" name="number"
-    value = <%=count%> readonly>
-  </div>
-  <div>
-    <label for="name">Skill Name: </label>
-    <input type="text" name="name" placeholder="Skill Name" />
-  </div>
-  <div>
-    <button>Submit!</button>
-  </div>
+  <div class="form-group form-number">
+    <label for="number">
+      <input type="text" name="number" id="number" value="<%= count %>" readonly> 
+    </label>
+    </div>
+    <div class="form-group form-name">
+      <label for="name">Skill:</label
+      ><input autocomplete="off" type="text" name="name" placeholder="Skill Name" />
+    </div>
+    <div class="button-group">
+      <div class="form-group cancel form-button">
+        <button formaction="/competencies/<%= competency._id %> " formmethod="GET">Cancel</button>
+      </div>
+      <div class="form-group submit form-button">
+        <button>Add</button>
+      </div>
+    </div>
 </form>
+</div>
+</div>
+<%- include('../partials/footer') %> 

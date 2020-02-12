@@ -1,17 +1,32 @@
-<h1>Hello!</h1>
-<div>
+<%-include('../partials/header')%>
+<div class="body-content">
+    <h1 class ="l-heading">Roles</h1>
+    <ul id="list">
     <%roles.forEach((role) => { %>
-        <a href="/roles/<%=role._id%>"><h4><%=role.name%></a> <a href="/roles/<%=role._id%>/edit">edit</a> </h4>
-        <p><%=role.description %></p>
+        <div class="role-and-competencies">
+            <li class="role">
+        <a href="/roles/<%=role._id%>"><h2 class="m-heading comp-heading"><%=role.name%></h2></a> 
+        <p class="description"><%=role.description %></p> <i class="fas fa-chevron-down show-more"></i>
+        </li>
+            <ul class="competency role-competencies skill-list">
        <%role.competenciesAndSkills.forEach((competency) => { %>
-           <p><%=competency.competency.number%><%=competency.competency.name %></p>
+            <li class="role-competency">
+           <h3 class= "s-heading"><%=competency.competency.number%><%=competency.competency.name %></h3>
+        <ul class="role-skill-list">
            <%competency.skills.forEach((skill) => { %>
-                <p><%=skill.number%> <%=skill.name %> </p>
-                <%skill.subSkills.forEach((subSkill) => { %>
-                    <p><%=subSkill.number %><%=subSkill.name %></p>
-                <%}) %>
-            <%});%>
-      <% }); %>
-    <%})%>
-    <a href="/roles/new">add new role</a>
-</div>
+                <li class="role-skill">
+                <h4 class="xs-heading"><%=competency.competency.number%>.<%=skill.number%> <%=skill.name %> </h4>
+                </li>
+            </li> 
+            <%});%> 
+            </ul>     
+
+            <% }); %>
+        </div>
+            <% }); %>
+    </ul>
+         <a class="btn btn-add" href="/roles/new">add new role</a>
+            
+        </div>
+        </div>
+<%-include('../partials/footer')%>

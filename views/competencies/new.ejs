@@ -1,28 +1,33 @@
-<h1>This is the new competency form:</h1>
-<h2>Competency #<%= count %></h2>
-<form action="/competencies" method="POST">
-  <div>
-    <select name="topic">
-      <option value="here!">Here!</option>
-    </select>
+<%-include('../partials/header')%>
+<div class="form-whole">
+<h1 class="l-heading form-heading">Add New Competency</h1>
+<h2 class="m-heading form-title">Competency #<%= count %></h2>
+<form id="form" action="/competencies" method="POST">
+  <div class="form-group form-number">
+    <label for="number">
+      <input type="text" name="number" id="number" value="<%= count %>" readonly> 
+    </label>
   </div>
-  <div>
-    <label for="number">Competency Number:</label><input type="number"
-    name="number" value = <%=count%> readonly>
-  </div>
-  <div>
+  <div class="form-group form-name">
     <label for="competencyName">Competency Name:</label
-    ><input type="text" name="competencyName" placeholder="competency Name" />
+    ><input autocomplete="off" type="text" name="competencyName" placeholder="Competency Name" />
   </div>
-  <div>
+  <div class="form-group form-description">
     <label for="description">Competency Description:</label>
-    <input
-      type="text"
+    <textarea
+      form="form"
       name="description"
-      placeholder="competency Description"
-    />
+      placeholder="Competency Description"> </textarea> 
   </div>
-  <div>
-    <button>Submit!</button>
+  <div class="button-group">
+  <div class="form-group cancel form-button">
+    <button formaction="/competencies" formmethod="GET">Cancel</button>
   </div>
+  <div class="form-group submit form-button">
+    <button>Add</button>
+  </div>
+</div>
 </form>
+</div>
+</div>
+<%- include('../partials/footer') %> 

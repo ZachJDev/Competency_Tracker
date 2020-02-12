@@ -1,14 +1,31 @@
-<form action="/roles" method="POST">
-    <div>
-        <input type="text" name="name" placeholder="Role Name" <%if(name) {%> value="<%=name%>"<%}%>>
-    </div>
-    <div>
-        <input type="text" name="description" placeholder="Role Description" <%if(description) {%> value="<%=description%>"<%}%>>
-    </div>
-    <div>
-        <input type="text" name="skills" placeholder="Role Skills">
-    </div>
-    <div>
-        <button>Submit!</button>
-    </div>
+<%-include('../partials/header')%>
+<div class="form-whole">
+<h1 class="l-heading form-heading">Add New Role</h1>
+<form id="form" action="/roles" method="POST">
+  <div class="form-group form-name">
+    <label for="roleName">Role Name:</label
+    ><input autocomplete="off" type="text" name="name" placeholder="Role Name" <%if(name) {%> value="<%=name%>"<%}%> />
+  </div>
+  <div class="form-group form-description">
+    <label for="description">Role Description:</label>
+    <textarea
+      form="form"
+      name="description"
+      placeholder="Role Description"> <%if(description) {%> value="<%=description%>"<%}%> </textarea> 
+  </div>
+  <div class="form-group form-skills">
+      <label for="skills">Role Skills:</label>
+    <input title="enter a competency number by itself to assign all of it's skills to the role" type="text" name="skills" placeholder="seperated by commas">
+</div>
+  <div class="button-group">   
+  <div class="form-group cancel form-button">
+    <button formaction="/roles" formmethod="GET">Cancel</button>
+  </div>
+  <div class="form-group submit form-button">
+    <button>Add</button>
+  </div>
+</div>
 </form>
+</div>
+</div>
+<%- include('../partials/footer') %> 

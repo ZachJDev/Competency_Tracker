@@ -1,22 +1,28 @@
-<form action="/competencies/<%= competency._id %>?_method=PUT " method=POST>
-    <div>
-      <label for="number">Competency Number:</label><input type="number"
-      name="number" value = <%=competency.number%> readonly>
-    </div>
-    <div>
-      <label for="competencyName">Competency Name:</label
-      ><input type="text" name="competencyName" value = <%= competency.name %>  />
-    </div>
-    <div>
-      <label for="description">Competency Description:</label>
-      <input
-        type="text"
-        name="description"
-        value = <%= competency.description %> 
-      />
-    </div>
-    <div>
-      <button>Submit!</button>
-    </div>
-  </form>
-  
+<%-include('../partials/header')%>
+<div class="form-whole">
+<h1 class="l-heading form-heading">Edit Competency</h1>
+<h2 class="m-heading form-title">Competency #<%= competency.number %>: <%= competency.name %> </h2>
+<form id="form" action="/competencies/<%= competency._id %>?_method=PUT" method="POST">
+  <div class="form-group form-name">
+    <label for="competencyName">Competency Name:</label
+    ><input autocomplete="off" type="text" name="competencyName" value="<%=competency.name%>" />
+  </div>
+  <div class="form-group form-description">
+    <label for="description">Competency Description:</label>
+    <textarea
+      form="form"
+      name="description"
+      > <%=competency.description%> </textarea> 
+  </div>
+  <div class="button-group">
+  <div class="form-group cancel form-button">
+    <a href="/competencies/<%=competency._id%>"><p>Cancel</p></a>
+  </div>
+  <div class="form-group submit form-button">
+    <button>Add</button>
+  </div>
+</div>
+</form>
+</div>
+</div>
+<%- include('../partials/footer') %> 
