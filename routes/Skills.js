@@ -16,8 +16,7 @@ router.get("/new", (req, res) => {
         console.log(competency.deletedSkills);
         if (competency.deletedSkills.length) {
           //if truthy; if there are items in deletedSkills
-          //THIS NEEDS TO HAPPEN AFTER THE  NEW SKILL HAS BEEN SAVED. RIGHT NOW, HITTING 'BACK' ON THE NEW FORM WILL MESS UP THE ORDERING
-          count = competency.deletedSkills.shift();
+          count = competency.deletedSkills[0]  //competency.deletedSkills.shift(); moved below
           competency.save().then(
             // trying to unduplicate this code is proving harder than I expected.
             res.render("../views/skills/new", {
@@ -51,7 +50,7 @@ router.post("/", (req, res) => {
   Skill.create(newSkill).then(skill => {
     Competency.findByIdAndUpdate(
       req.params.id,
-      { $push: { skills: skill } },
+      { $push: { skills: skill }, $pop: {deletedSkills: -1} },
       { useFindAndModify: false }
     )
       .then(res.redirect("/competencies/" + req.params.id))

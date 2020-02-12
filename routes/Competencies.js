@@ -32,7 +32,7 @@ router.get("/new", (req, res) => {
       console.log(element);
       if (!!element.count.length) {
         // console.log(element)
-        let number = element.count.shift();
+        let number = element.count[0];
         res.render("competencies/new", { count: number });
       } else {
         Competency.countDocuments({}, (err, count) => {
@@ -57,6 +57,7 @@ router.post("/", (req, res) => {
     description: req.body.description,
     number: req.body.number
   };
+  DeletedCompetencyCounter.findOneAndUpdate({}, {$pop: {count: -1}}).then(doc => doc.save());
   Competency.create(newCompetency)
     .then(res.redirect("/Competencies"))
     .catch(err => {
