@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
 
 /* reset */
-
+html {
+  font-size: 18px ;
+}
 * {
   margin: 0;
   padding: 0%;
@@ -326,15 +328,14 @@ input:focus {
   justify-content: space-between;
 }
 
-/* Competency Show */
+/*  Show */
 
 .main-info {
   font-size: 1.3rem;
-  text-align: center;
   margin: .8rem 0 1rem 0;
   padding-bottom: .3rem;
   border-bottom: 3px solid #33333319;
-  text-align: right;
+  text-align: left;
 }
 
 .body-content-show .utilities {
@@ -488,10 +489,11 @@ background-color: #4ece4c;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  color: #333333;
 }
 
 .form-whole .form-button.cancel a:hover {
-  /* color: #e2e2e2; */
+  
   background-color: #a09c9c;
 }
 
@@ -510,4 +512,16 @@ background-color: #4ece4c;
 }
 .role-content .role-classes {
   border-left: #333333 solid 3px;
+}
+
+.role-content .role-skills .competency {
+  display: flex;
+}
+.role-content .role-skills .competency form {
+  align-self: center;
+  margin-left: .5rem;
+}
+
+.role-content .role-skills .competency button {
+  font-size: 1rem;
 }

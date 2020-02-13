@@ -14,12 +14,12 @@
 <% role.competenciesAndSkills.forEach(comp => { %>
     <div class="list-items">
         <li class="competency">
-            <h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3>
+            <h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3><form class="competency-delete " id="form"action="/roles/<%=role._id%>/competency/<%=comp.competency._id%>?_method=PUT" method=POST><button  class="delete">Remove</button> </form>
         </li>
         <ul class="skills-list">
             <% comp.skills.forEach(skill => { %>
                 <li class="skill">
-                    <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %></h4>
+                    <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %></h4><form class="skill-delete invisible" id="form"action="/roles/<%=role._id%>/skill/<%=skill._id%>?_method=PUT" method=POST><button  class="delete ">Remove</button> </form>
                 </li>
                 <ul class="subskills-list">
                     <% skill.subSkills.forEach(subskill => { %>

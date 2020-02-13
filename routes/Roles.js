@@ -206,6 +206,30 @@ router.put("/:id", (req, res) => {
     res.send("OOPS!"); // fix error handling
   }
 });
+
+//route to remove skills and comps from roles
+router.put("/:id/:thing/:thing_id", (req, res) => {
+  let lookup = req.params.thing_id;
+    var update = Role.findById(req.params.id).then(doc => {
+      for (let i = 0; i < doc.competenciesAndSkills.length; i++) {
+        if (req.params.thing === "skill") {
+          let index = doc.competenciesAndSkills[i].skills.indexOf(lookup);
+          if (index != -1) {
+            doc.competenciesAndSkills[i].skills.splice(index, 1);
+            break;
+          }
+        } else if (req.params.thing === "competency") {
+          if (doc.competenciesAndSkills[i].competency == lookup) {
+            doc.competenciesAndSkills.splice(i, 1);
+            break
+          }
+        }
+      }
+      doc.save();
+    });
+  update.then(res.redirect("/roles/" + req.params.id));
+});
+
 //Destroy
 router.delete("/:id", (req, res) => {
   Role.findByIdAndDelete(req.params.id)

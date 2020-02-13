@@ -24,12 +24,12 @@
       let skillEdit = el.querySelector(".skill-edit");
       let skillDelete = el.querySelector(".skill-delete");
       el.addEventListener("mouseover", () => {
-        skillEdit.classList.toggle("invisible");
         skillDelete.classList.toggle("invisible");
+        skillEdit.classList.toggle("invisible");
       });
       el.addEventListener("mouseout", () => {
-        skillEdit.classList.toggle("invisible");
         skillDelete.classList.toggle("invisible");
+        skillEdit.classList.toggle("invisible");
       });
     });
   } catch (e) {

@@ -112,7 +112,7 @@ router.delete("/:skill_id", (req, res) => {
         },
         {
           $pull: {
-            "competenciesAndskills.$[Skills].$": req.params.skill_id } 
+            "competenciesAndskills.$[Skills].$": req.params.skill_id } //just realized that my capitalization is wrong and at this point I'm afdraid to fix it cause it works.
         },
         { useFindAndModify: false,
         arrayFilters: {skills: req.params._id} }
