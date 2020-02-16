@@ -18,9 +18,9 @@
     <input title="enter a competency number by itself to assign all of it's skills to the role. Seperate skills with commas" type="text" name="skills" placeholder=" Add new skills">
 </div>
   <div class="button-group">   
-  <div class="form-group cancel form-button">
-    <button formaction="/roles" formmethod="GET">Cancel</button>
-  </div>
+    <div class="form-group cancel form-button">
+      <a href="/roles/<%=role._id%>"><p>Cancel</p></a>
+    </div>
   <div class="form-group submit form-button">
     <button>Add</button>
   </div>
