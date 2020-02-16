@@ -1,5 +1,6 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
+  CompetenciesAndSkillsList = require("./internal-modules/Competencies-and-skillsObj.js")
   Role = require("../models/Role.js"),
   Competency = require("../models/Competency.js");
 
@@ -109,18 +110,15 @@ router.post("/", (req, res) => {
   const roleName = req.body.name;
   const roleDescription = req.body.description;
   try {
-    let skillsObj = createSkillsMap(req.body.skills); // right now there's no protection against returning an onject key with 0 and other numbers. should be one or the other.
-    findCompetencyIds(skillsObj).then(result => {
-      let comps = findSkillIds(result);
-      comps.then(compsAndSkills => {
-        let la = makeArrayForModel(compsAndSkills); //bad variable name
+        let compInfo = new CompetenciesAndSkillsList(req.body.skills)
+        compInfo.init().then((resolve)=>{
+          console.log(compInfo)
         Role.create({
           name: roleName,
           description: roleDescription,
-          competenciesAndSkills: la
-        }).then(res.redirect("/roles"));
-      });
-    });
+          rawSkills : compInfo.skillsMap,
+          competenciesAndSkills: compInfo.skillIdsArray
+        }).then(res.redirect("/roles"))});
   } catch (error) {
     console.log("Error When Creating Role");
     console.log(error);
