@@ -16,7 +16,6 @@ async function findCompetencyIds(skillsObj) {
     if (el === null) continue;
     competencyIdsAndSkillNumbers[el._id] = skillsObj[el.number];
   }
-  console.log(competencyIdsAndSkillNumbers)
   return competencyIdsAndSkillNumbers;
 }
 
@@ -55,15 +54,19 @@ function makeArrayForModel(competenciesAndSkills) {
 }
 
 module.exports = class CompetenciesAndSkills {
-  constructor(skills) {
+  constructor(skills, oldSkills = []) {
+      this.skillsSet = new Set(oldSkills)
     this.unparsedSkills = skills;
     this.skillsMap = (() => {
       let competenciesAndSkills = {};
       let skillsArray = [];
       let skills = this.unparsedSkills.split(",");
       skills.forEach(skill => {
-        let splitSkills = skill.split("."); //this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
-        skillsArray.push(splitSkills);
+        if (!this.skillsSet.has(skill)) {
+          this.skillsSet.add(skill);
+          let splitSkills = skill.split("."); //this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
+          skillsArray.push(splitSkills);
+        }
       });
       for (let skill of skillsArray) {
         if (isNaN(skill[0])) continue;
@@ -79,9 +82,12 @@ module.exports = class CompetenciesAndSkills {
       return competenciesAndSkills;
     })();
   }
-   async init(){
-      this.compIDAndSkills = await findCompetencyIds(this.skillsMap)
-      this.compIdsAndSkillIds = await findSkillIds(this.compIDAndSkills)
-      this.skillIdsArray = makeArrayForModel(this.compIdsAndSkillIds)
+  async init() {
+    this.compIDAndSkills = await findCompetencyIds(this.skillsMap);
+    this.compIdsAndSkillIds = await findSkillIds(this.compIDAndSkills);
+    this.skillIdsArray = makeArrayForModel(this.compIdsAndSkillIds);
   }
-}
+  static fromIterator(array, oldArray = []) {
+      return new CompetenciesAndSkills(array.join(), oldArray)
+  }
+};

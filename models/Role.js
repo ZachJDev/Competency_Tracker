@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const roleSchema = new mongoose.Schema({
   name: String,
   description: String,
-  rawSkills: {String: [Number]},
+  rawSkills: [],
   competenciesAndSkills: [
     {
       competency: { type: mongoose.Schema.Types.ObjectId, ref: "Competency"},

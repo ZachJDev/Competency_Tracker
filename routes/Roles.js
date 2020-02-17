@@ -116,7 +116,7 @@ router.post("/", (req, res) => {
         Role.create({
           name: roleName,
           description: roleDescription,
-          rawSkills : compInfo.skillsMap,
+          rawSkills : Array.from(compInfo.skillsSet),
           competenciesAndSkills: compInfo.skillIdsArray
         }).then(res.redirect("/roles"))});
   } catch (error) {
