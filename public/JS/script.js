@@ -1,10 +1,10 @@
-// use Chevron to display and hide skills
-(function chevronDisplay() {
+// use Chevron to display and hide skills 
+(function chevronDisplayCompetencies() {
   try {
     const compAndSkill = document.querySelectorAll(".competency-and-skill");
     compAndSkill.forEach(el => {
       let skill = el.querySelector(".skill-list");
-      el.querySelector(".competency .show-more").addEventListener(
+      el.querySelector(".competency .show-more, .role .show-more").addEventListener(
         "click",
         () => {
           skill.classList.toggle("hidden");
@@ -42,7 +42,7 @@
   const subskill = document.querySelectorAll(".subskill");
   try {
     subskill.forEach(el => {
-        let subskillDelete = el.querySelector(".subskill-delete");
+      let subskillDelete = el.querySelector(".subskill-delete");
       let subskillEdit = el.querySelector(".subskill-edit");
       el.addEventListener("mouseover", () => {
         subskillEdit.classList.toggle("invisible");
@@ -82,6 +82,29 @@
   } catch (e) {
     console.log("error: ", e);
   }
+})();
+
+//autohide/show navmenu when resizing window
+(function resize() {
+  try {
+    const navbuttons = document.querySelector("#navigation")
+    window.addEventListener("resize", () => {
+      if(window.innerWidth < 701){
+        navbuttons.classList.add("hidden")}
+      else navbuttons.classList.remove("hidden")
+    })
+  } catch (e) {}
+})();
+
+//expand navmenu for responsiveness
+(function navmenuToggle() {
+  try {
+    const navmenu = document.querySelector(".navmenu");
+    const  navbuttons = document.querySelector("#navigation")
+    navmenu.addEventListener("click", () => {
+      navbuttons.classList.toggle("hidden")
+    });
+  } catch (e) {}
 })();
 
 //creates the regular expression for the search function
