@@ -62,11 +62,12 @@ module.exports = class CompetenciesAndSkills {
       let skillsArray = [];
       let skills = this.unparsedSkills.split(",");
       skills.forEach(skill => {
-        if (!this.skillsSet.has(skill)) {
           this.skillsSet.add(skill);
+        })
+        console.log(this.skillsSet)
+        Array.from(this.skillsSet).forEach(skill => {
           let splitSkills = skill.split("."); //this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
           skillsArray.push(splitSkills);
-        }
       });
       for (let skill of skillsArray) {
         if (isNaN(skill[0])) continue;
