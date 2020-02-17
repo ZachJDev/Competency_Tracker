@@ -4,13 +4,14 @@
 <form id="form"action="/roles/<%=role._id%>?_method=PUT" method=POST>
   <div class="form-group form-name">
     <label for="roleName">Role Name:</label
-    ><input autocomplete="off" type="text" name="name" placeholder="Role Name" value="<%=role.name%>" />
+    ><input required autocomplete="off" type="text" name="name" placeholder="Role Name" value="<%=role.name%>" />
   </div>
   <div class="form-group form-description">
     <label for="description">Role Description:</label>
     <textarea
       form="form"
       name="description"
+      required
       placeholder="Role Description"> <%=role.description%> </textarea> 
   </div>
   <div class="form-group form-skills">

@@ -4,13 +4,14 @@
 <form id="form" action="/roles" method="POST">
   <div class="form-group form-name">
     <label for="roleName">Role Name:</label
-    ><input autocomplete="off" type="text" name="name" placeholder="Role Name" <%if(name) {%> value="<%=name%>"<%}%> />
+    ><input required autocomplete="off" type="text" name="name" placeholder="Role Name" <%if(name) {%> value="<%=name%>"<%}%> />
   </div>
   <div class="form-group form-description">
     <label for="description">Role Description:</label>
     <textarea
       form="form"
       name="description"
+      required
       placeholder="Role Description"> <%if(description) {%> value="<%=description%>"<%}%> </textarea> 
   </div>
   <div class="form-group form-skills">

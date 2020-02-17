@@ -1,13 +1,22 @@
-<h2><%= competency.number %>.<%=skill.number%> <%=subSkill.number%>: <%= subSkill.name %> </h2>
+  <%-include('../partials/header')%>
+<div class="form-whole">
+<h1 class="l-heading form-heading"> <%=competency.name%></h1>
+<h1 class="l-heading form-heading"> edit Subskill <%=subSkill.number%> for</h1>
+<h2 class="m-heading form-title"><%= skill.name %> </h2>
 <form action="/competencies/<%=competency._id%>/skills/<%= skill.id%>/subSkills/<%=subSkill.id%>?_method=PUT" method=POST>
-    <div>
-      <label for="name">subSkill Name: </label>
-      <input type="text" name="name" value="<%= subSkill.name%>" />
+    <div class="form-group form-name">
+      <label for="name">subskill: </label>
+    <input required type="text" name="name" value="<%= subSkill.name%>"/>
     </div>
-    <div>
-      <button>Submit!</button>
+    <div class="button-group">
+      <div class="form-group cancel form-button">
+        <button formaction="/competencies/<%= competency._id %> " formmethod="GET">Cancel</button>
+      </div>
+      <div class="form-group submit form-button">
+        <button>Submit</button>
+      </div>
     </div>
-  </form>
-
-
-  
+</form>
+</div>
+</div>
+<%- include('../partials/footer') %> 

@@ -5,7 +5,7 @@
 <form action="/competencies/<%=competency._id%>/skills/<%= skill.id%>?_method=PUT" method=POST>
     <div class="form-group form-name">
       <label for="name">Skill:</label>
-      <input autocomplete="off" type="text" name="name" value="<%= skill.name%>" />
+      <input autocomplete="off" required type="text" name="name" value="<%= skill.name%>" />
     </div>
     <div class="button-group">
       <div class="form-group cancel form-button">

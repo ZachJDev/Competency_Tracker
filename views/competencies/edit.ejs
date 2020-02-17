@@ -5,13 +5,14 @@
 <form id="form" action="/competencies/<%= competency._id %>?_method=PUT" method="POST">
   <div class="form-group form-name">
     <label for="competencyName">Competency Name:</label
-    ><input autocomplete="off" type="text" name="competencyName" value="<%=competency.name%>" />
+    ><input required autocomplete="off" type="text" name="competencyName" value="<%=competency.name%>" />
   </div>
   <div class="form-group form-description">
     <label for="description">Competency Description:</label>
     <textarea
       form="form"
       name="description"
+      required
       > <%=competency.description%> </textarea> 
   </div>
   <div class="button-group">

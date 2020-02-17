@@ -120,7 +120,7 @@ router.put("/:subskill_id", (req, res) => {
       useFindAndModify: false
     }
   )
-    .then(skill => res.send(skill))
+    .then(skill =>res.redirect("/competencies/" + req.params.id))
     .catch(err => {
       console.log(err);
       res.redirect("/competencies/" + req.params.id);

@@ -42,9 +42,7 @@
   const subskill = document.querySelectorAll(".subskill");
   try {
     subskill.forEach(el => {
-      try {
         let subskillDelete = el.querySelector(".subskill-delete");
-      } catch (e) {}
       let subskillEdit = el.querySelector(".subskill-edit");
       el.addEventListener("mouseover", () => {
         subskillEdit.classList.toggle("invisible");
@@ -60,7 +58,8 @@
   }
 })();
 
-//Search function
+//Search function for Competencies...
+//I should do some refactoring to make this code work with competencies and roles.
 (function search() {
   try {
     const compAndSkill = document.querySelectorAll(".competency-and-skill");
