@@ -92,6 +92,14 @@ input:focus {
   opacity: 0;
 }
 
+.not-button {
+  border: none;
+  cursor: pointer;
+}
+.not-button:hover {
+  color: #40b33f;
+}
+
 /* Search Bar*/
 
 #search {
@@ -200,9 +208,15 @@ input:focus {
 .body-content .l-heading {
   padding-top: 0;
   /* margin-top: 40px; */
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 
+.body-content .btn-top {
+  margin-top: 1rem;
+}
+.body-content .top-utils {
+  border-bottom: #33333390;
+}
 #list {
   width: 100%;
 }
@@ -339,7 +353,9 @@ input:focus {
   flex-direction: column;
   justify-content: space-between;
 }
-
+.body-content #list .role-and-competencies .competency .role-competency .role-skill-list li  {
+  margin: .25rem .5rem ;
+}
 /*  Show */
 
 .main-info {
@@ -372,7 +388,8 @@ input:focus {
 }
 
 .body-content-show .list-items:nth-child(2n),
-.body-content-show .list-items:nth-child(2n) .delete {
+.body-content-show .list-items:nth-child(2n) .delete,
+.body-content-show .list-items:nth-child(2n) .not-button {
   background-color: #e2e2e2;
 }
 
@@ -380,6 +397,24 @@ input:focus {
 .body-content-show .skill {
   display: flex;
 }
+.body-content-show .list-items .skills-list .skill{
+  margin: .2rem .4rem .5rem 1rem;
+}
+.body-content-show .list-items .skills-list .skill{
+  margin: .2rem 1rem .5rem 1rem;
+}
+
+.body-content-show .list-items .skills-list .skill .skill-delete {
+  margin-left: .5rem ;
+}
+
+.body-content-show .list-items .skills-list .subskills-list .subskill {
+  margin-left: 2rem;
+}
+.body-content-show .list-items .skills-list .subskills-list .subskill h4 {
+  font-size: .9rem;
+}
+
 .body-content-show .list-items .btn {
   align-self: flex-end;
   font-size: 0.8rem;

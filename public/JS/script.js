@@ -44,14 +44,18 @@
     subskill.forEach(el => {
       let subskillDelete = el.querySelector(".subskill-delete");
       let subskillEdit = el.querySelector(".subskill-edit");
+      if(!!subskillDelete){ //to stop errors from appearing when on role pages.
       el.addEventListener("mouseover", () => {
         subskillEdit.classList.toggle("invisible");
         subskillDelete.classList.toggle("invisible");
       });
+    }
+    if(!!subskillEdit){
       el.addEventListener("mouseout", () => {
         subskillEdit.classList.toggle("invisible");
         subskillDelete.classList.toggle("invisible");
       });
+    }
     });
   } catch (e) {
     console.log("error: ", e);

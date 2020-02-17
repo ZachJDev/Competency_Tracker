@@ -14,7 +14,7 @@
 <% role.competenciesAndSkills.forEach(comp => { %>
     <div class="list-items">
         <li class="competency">
-           <form action="/competencies/<%= comp.competency._id %>" method="GET" > <button><h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3></button></form><form class="competency-delete " id="form"action="/roles/<%=role._id%>/competency/<%=comp.competency._id%>?_method=PUT" method=POST><button  class="delete">Remove</button> </form>
+           <form action="/competencies/<%= comp.competency._id %>" method="GET" > <button class="not-button"><h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3></button></form><form class="competency-delete " id="form"action="/roles/<%=role._id%>/competency/<%=comp.competency._id%>?_method=PUT" method=POST><button  class="delete">Remove</button> </form>
         </li>
         <ul class="skills-list">
             <% comp.skills.forEach(skill => { %>

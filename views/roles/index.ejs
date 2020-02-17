@@ -1,6 +1,7 @@
 <%-include('../partials/header')%>
 <div class="body-content">
     <h1 class ="l-heading">Roles</h1>
+    <a class="btn btn-add btn-top" href="/roles/new">add new role</a>
     <ul id="list">
     <%roles.forEach((role) => { %>
         <div class="role-and-competencies competency-and-skill">
@@ -11,11 +12,11 @@
             <ul class="competency role-competencies skill-list">
        <%role.competenciesAndSkills.forEach((competency) => { %>
             <li class="role-competency">
-           <h3 class= "s-heading"><%=competency.competency.number%><%=competency.competency.name %></h3>
+           <h3 class= "s-heading"><%=competency.competency.number%>: <%=competency.competency.name %></h3>
         <ul class="role-skill-list">
            <%competency.skills.forEach((skill) => { %>
                 <li class="role-skill">
-                <h4 class="xs-heading"><%=competency.competency.number%>.<%=skill.number%> <%=skill.name %> </h4>
+                <h4 class="xs-heading"><%=competency.competency.number%>.<%=skill.number%>: <%=skill.name %> </h4>
                 </li>
             </li> 
             <%});%> 
