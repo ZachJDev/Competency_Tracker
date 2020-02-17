@@ -25,7 +25,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
 //I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
-mongoose.connect("mongodb://localhost/CompetencyTracker", {
+mongoose.connect(ENV.DB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
