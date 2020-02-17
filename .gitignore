@@ -2,3 +2,4 @@ node_modules/*
 .eslintrc.js
 .vscode/*
 node_fba53251c3d4c.tmp
+env.js

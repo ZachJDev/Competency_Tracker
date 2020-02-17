@@ -3,6 +3,7 @@ const express = require("express"),
   request = require("request"),
   bodyParser = require("body-parser"),
   methodOverride = require("method-override"),
+  ENV = require("./env"),
   app = express(),
   port = 5500;
 
@@ -39,4 +40,4 @@ app.use("/competencies/:id/skills", skillRoutes);
 app.use("/competencies/:id/skills/:skill_id/subskills", subSkillRoutes);
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + '\\public'));
-app.listen(port, () => console.log("server up"));
+app.listen(process.env.PORT || port, () => console.log("server up"));
