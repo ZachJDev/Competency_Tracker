@@ -2,8 +2,10 @@ const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
   DeletedCompetencyCounter = require("../models/DeletedCompetencyCounter"),
-  Skill = require("../models/Skill");
+  Skill = require("../models/Skill"),
 Competency = require("../models/Competency.js");
+
+const middleware = require("./internal-modules/middleware.js")
 
 //competencies routes
 //index
@@ -66,7 +68,7 @@ router.post("/", (req, res) => {
 });
 
 //Show
-router.get("/:id", (req, res) =>
+router.get("/:id", middleware.checkForCompetency, (req, res) =>
   Competency.findById(req.params.id)
     .populate({ path: " skills" })
     .then(competency =>
@@ -77,7 +79,7 @@ router.get("/:id", (req, res) =>
     })
 );
 //Edit
-router.get("/:id/edit", (req, res) =>
+router.get("/:id/edit", middleware.checkForCompetency, (req, res) =>
   Competency.findById(req.params.id)
     .populate({ path: " skills" })
     .then(competency =>
@@ -88,7 +90,7 @@ router.get("/:id/edit", (req, res) =>
     })
 );
 //Update
-router.put("/:id", (req, res) => {
+router.put("/:id", middleware.checkForCompetency, (req, res) => {
   console.log(req.body.competencyName);
   Competency.findByIdAndUpdate(req.params.id, {
     $set: { name: req.body.competencyName, description: req.body.description }
@@ -100,7 +102,7 @@ router.put("/:id", (req, res) => {
 });
 //Destroy
 //I still need to add the deleted competency to the counter
-router.delete("/:id", (req, res) => {
+router.delete("/:id", middleware.checkForCompetency, (req, res) => {
   Competency.findById(req.params.id)
     .then(competency => {
       let promises = [];

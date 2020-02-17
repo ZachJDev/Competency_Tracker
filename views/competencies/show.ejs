@@ -10,7 +10,7 @@
 <ul>
 <%competency.skills.forEach(skill => { %>
     <div class="list-items">
-    <li class="skill">
+    <li class="skill catch">
       <h3 class="s-heading"><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3>
       <a class="skill-edit invisible btn btn-primary" href="/competencies/<%=competency._id%>/skills//<%=skill._id%>/edit">Edit</a>
       <form class="skill-delete invisible"  method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this skill?')"> <button class="delete btn">delete</button>

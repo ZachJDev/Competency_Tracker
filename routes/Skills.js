@@ -1,22 +1,23 @@
 const express = require("express"),
   router = express.Router({ mergeParams: true }),
   Role = require("../models/Role.js"),
-  Skill = require("../models/Skill.js");
+  Skill = require("../models/Skill.js"),
 Competency = require("../models/Competency.js");
+
+const middleware = require("./internal-modules/middleware")
 
 //Skill routes
 //New
-router.get("/new", (req, res) => {
+router.get("/new", middleware.checkForCompetency, (req, res) => {
   var count;
   Competency.findById(req.params.id, (err, competency) => {
     try {
       if (err) {
         console.log(err);
       } else {
-        console.log(competency.deletedSkills);
         if (competency.deletedSkills.length) {
           //if truthy; if there are items in deletedSkills
-          count = competency.deletedSkills[0]  //competency.deletedSkills.shift(); moved below
+          count = competency.deletedSkills[0]  //competency.deletedSkills.shift() moved below
           competency.save().then(
             // trying to unduplicate this code is proving harder than I expected.
             res.render("../views/skills/new", {
@@ -41,8 +42,7 @@ router.get("/new", (req, res) => {
 });
 
 //Create
-router.post("/", (req, res) => {
-  console.log(req.params.id);
+router.post("/", middleware.checkForCompetency, (req, res) => {
   let newSkill = {
     name: req.body.name,
     number: req.body.number
@@ -61,7 +61,7 @@ router.post("/", (req, res) => {
 });
 
 //Edit
-router.get("/:skill_id/edit", (req, res) =>
+router.get("/:skill_id/edit", middleware.checkForCompetency, middleware.checkForSkill, (req, res) =>
   Skill.findById(req.params.skill_id)
     .then(skill =>
       Competency.findById(req.params.id).then(competency =>
@@ -73,7 +73,7 @@ router.get("/:skill_id/edit", (req, res) =>
     })
 );
 //Update
-router.put("/:skill_id", (req, res) =>
+router.put("/:skill_id", middleware.checkForCompetency, middleware.checkForSkill, (req, res) =>
   Skill.findByIdAndUpdate(
     req.params.skill_id,
     { $set: { name: req.body.name } },
@@ -88,7 +88,7 @@ router.put("/:skill_id", (req, res) =>
 /*OH my god....
 I just realized that this code I wrote a month ago never actually DELETES the skill....
  */
-router.delete("/:skill_id", (req, res) => {
+router.delete("/:skill_id", middleware.checkForCompetency, middleware.checkForSkill, (req, res) => {
   let skillNumber;
   Skill.findById(req.params.skill_id)
     .then(skill => {
