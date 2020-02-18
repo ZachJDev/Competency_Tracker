@@ -4,8 +4,8 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   methodOverride = require("method-override"),
   app = express(),
-  port = 5500;
-
+  port = process.env.PORT || 5500;
+console.log(port)
 const Skill = require("./models/Skill"),
   Competency = require("./models/Competency"),
   DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
@@ -25,6 +25,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
 //I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
+
 mongoose.connect( DATABASEURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -39,4 +40,4 @@ app.use("/competencies/:id/skills", skillRoutes);
 app.use("/competencies/:id/skills/:skill_id/subskills", subSkillRoutes);
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + '\\public'));
-app.listen(process.env.PORT || port, () => console.log("server up"));
+app.listen( port, () => console.log("server up"));
