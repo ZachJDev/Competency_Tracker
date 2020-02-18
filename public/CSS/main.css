@@ -570,8 +570,8 @@ input:focus {
 .role-content .role-skills .competency button {
   font-size: 1rem;
 }
-
-@media only screen and (max-width: 700px) {
+/********MOBILE*********/
+@media  (max-width: 700px) {
   #navbar {
     width: 100%;
     position: fixed;
