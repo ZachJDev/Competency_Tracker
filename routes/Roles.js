@@ -33,7 +33,6 @@ router.post("/", (req, res) => {
   try {
     let compInfo = new CompetenciesAndSkillsList(req.body.skills);
     compInfo.init().then(resolve => {
-      console.log(compInfo);
       Role.create({
         name: roleName,
         description: roleDescription,
@@ -80,7 +79,6 @@ router.put("/:id", (req, res) => {
     Role.findById(req.params.id)
       .then(role => {
         let oldSkills = new Set(role.rawSkills); //I don't think I need to be changing these from Array to Set back to Array....
-        console.log("old Skills:", oldSkills);
         let newSkills = req.body.skills;
         let updateCompeteniesAndSkillsInfo = new CompetenciesAndSkillsList(
           newSkills,
@@ -132,11 +130,10 @@ router.put("/:id/:thing/:thing_id", (req, res) => {
 //Destroy
 router.delete("/:id", (req, res) => {
   Role.findByIdAndDelete(req.params.id)
-    .then((err, fail) => {
-      if (err) {
-        throw new error();
-      }
-      res.redirect("/roles");
+    .then((success, fail) => {
+      if (success) {
+        res.redirect("/roles");
+      } 
     })
     .catch(err => {
       res.send("asdfsdf"); //fix error handling
