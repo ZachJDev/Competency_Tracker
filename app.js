@@ -3,7 +3,7 @@ const express = require("express"),
   request = require("request"),
   bodyParser = require("body-parser"),
   methodOverride = require("method-override"),
-  ENV = require("./env"),
+  Environment = require("./env"),
   app = express(),
   port = 5500;
 
@@ -26,7 +26,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //Mongoose setup:
 //mongodb://localhost/CompetencyTracker
 //I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
-mongoose.connect(ENV.DB, {
+mongoose.connect(Environment.DB, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
