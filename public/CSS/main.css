@@ -88,6 +88,9 @@ input:focus {
 .hidden {
   display: none !important;
 }
+.nav-hidden {
+  display: none;
+}
 .invisible {
   opacity: 0;
 }
@@ -141,6 +144,7 @@ input:focus {
 
 #navbar #logo-container {
   text-align: center;
+  flex: 1;
 }
 #navbar #logo-container h1 {
   color: #f2f2f2;
@@ -168,7 +172,7 @@ input:focus {
 }
 
 #navbar #navigation {
-  padding-bottom: 10rem;
+  flex: 1;
 }
 #navbar #logo-container .navmenu {
   display: none;
@@ -189,6 +193,9 @@ input:focus {
 #navbar #navigation li a:hover {
   color: #90e28f;
 }
+#navigation.nav-hidden {
+  display: block;
+}
 /* body content */
 
 .body-content,
@@ -197,6 +204,7 @@ input:focus {
   flex-direction: column;
   margin: 40px 0 40px 200px;
   width: 90%;
+  padding-bottom: 100px;
 }
 
 .body-content-show.roles {
@@ -432,6 +440,13 @@ input:focus {
   font-size: 1.4rem;
 }
 
+.body-content .btn.btn-add {
+  position: fixed;
+  bottom: 5vh;
+  right: 5vh;
+  background-color: #40b33f;
+}
+
 /* forms */
 .form-whole {
   display: flex;
@@ -572,6 +587,12 @@ input:focus {
 }
 /********MOBILE*********/
 @media  (max-width: 700px) {
+  #flex-body {
+    width: 100%;
+  }
+  .body-content {
+    width: 100%;
+  }
   #navbar {
     width: 100%;
     position: fixed;
@@ -606,7 +627,9 @@ input:focus {
   #navbar #logo-container .login {
     display: none;
   }
-
+  #navbar .nav-hidden {
+    display: none;
+  }
   #navbar #logo-container .navmenu {
     display: inline-block;
     font-size: 1.5rem;
@@ -625,7 +648,7 @@ input:focus {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    background-color: rgba(33, 33, 33, 0.9);
+    background-color: rgba(33, 33, 33);
     /* display: none; */
   }
 
@@ -635,10 +658,11 @@ input:focus {
     padding-top: 50px;
     width: 100%;
   }
+
 }
 
-@media screen and (max-width: 700px) {
-  #navbar #navigation.container {
+@media screen and (max-width: 701px) {
+  #navbar #navigation.hidden {
     display: block; 
   }
 }

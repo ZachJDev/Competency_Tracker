@@ -94,20 +94,24 @@
     const navbuttons = document.querySelector("#navigation")
     window.addEventListener("resize", () => {
       if(window.innerWidth < 701){
-        navbuttons.classList.add("hidden")}
-      else navbuttons.classList.remove("hidden")
+        navbuttons.classList.add("nav-hidden")}
+      else navbuttons.classList.remove("nav-hidden")
     })
   } catch (e) {}
 })();
 
-//expand navmenu for responsiveness
+//expand navmenu for responsiveness, collapse on outside click
 (function navmenuToggle() {
   try {
+    const body = document.querySelector(".body-content")
     const navmenu = document.querySelector(".navmenu");
     const  navbuttons = document.querySelector("#navigation")
     navmenu.addEventListener("click", () => {
-      navbuttons.classList.toggle("hidden")
+      navbuttons.classList.toggle("nav-hidden")
     });
+    body.addEventListener("click", () => {
+      if(!navbuttons.classList.contains("nav-hidden")) navbuttons.classList.add("nav-hidden")
+    })
   } catch (e) {}
 })();
 

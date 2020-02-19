@@ -6,6 +6,7 @@ const express = require("express"),
   app = express(),
   port = process.env.PORT || 5500;
 console.log(port)
+
 const Skill = require("./models/Skill"),
   Competency = require("./models/Competency"),
   DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
@@ -27,7 +28,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
 // process.env.DATABASEURL
 
-mongoose.connect(process.env.DATABASEURL, {
+mongoose.connect("mongodb://localhost/CompetencyTracker", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });

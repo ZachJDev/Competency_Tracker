@@ -1,7 +1,6 @@
 <%-include('../partials/header')%>
 <div class="body-content">
 <h1 class="l-heading">All Competencies:</h1>
-<a class="btn btn-add btn-top" href="/competencies/new"> add new competency</a>
 <input type="text" id="search" placeholder="search...">
 <ul id="list">
   <% if(!!Competencies) { %> <%Competencies.forEach(competency => { %>
