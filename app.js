@@ -5,13 +5,7 @@ const express = require("express"),
   methodOverride = require("method-override"),
   app = express(),
   port = process.env.PORT || 5500;
-console.log(port)
 
-const Skill = require("./models/Skill"),
-  Competency = require("./models/Competency"),
-  DeletedCompetencyCounter = require("./models/DeletedCompetencyCounter"),
-  Role = require("./models/Role"),
-  seedDB = require("./seedDb");
 
 app.use(methodOverride("_method"));
 
@@ -28,7 +22,7 @@ const competencyRoutes = require("./routes/Competencies"),
 //I've been having troubling keeing environmental variables straight between my computers, so until this is hosted anywhere, mongoose will stay connected like this.
 // process.env.DATABASEURL
 
-mongoose.connect("mongodb://localhost/CompetencyTracker", {
+mongoose.connect(process.env.DATABASEURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
