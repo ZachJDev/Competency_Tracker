@@ -1,40 +1,42 @@
-const Competency = require("../../models/Competency.js");
+/* eslint-disable no-restricted-syntax */
+const Competency = require('../../models/Competency.js');
 
 function objectKeysToNumbers(object) {
-  return Object.keys(object).map(key => Number(key));
+  return Object.keys(object).map((key) => Number(key));
 }
 
-async function findCompetencyIds(skillsObj) {
-  let competencyIdsAndSkillNumbers = {};
-  let competencyNumbers = objectKeysToNumbers(skillsObj);
-  let promises = [];
-  for (number of competencyNumbers) {
-    promises.push(Competency.findOne({ number: number }, { number: 1 }));
+async function findCompetencyIdsAndSkillNumbers(skillsObj) {
+  const competencyIdsAndSkillNumbers = {};
+  const competencyNumbers = objectKeysToNumbers(skillsObj);
+  const promises = [];
+  for (const number of competencyNumbers) {
+    promises.push(Competency.findOne({ number }, { number: 1 }));
   }
   const result = await Promise.all(promises);
-  for (el of result) {
+  for (const el of result) {
     if (el === null) continue;
     competencyIdsAndSkillNumbers[el._id] = skillsObj[el.number];
   }
+
   return competencyIdsAndSkillNumbers;
 }
 
 async function findSkillIds(competenciesAndSkills) {
-  let justCompetencyIds = Object.keys(competenciesAndSkills);
-  let newCompetenciesObject = {};
-  let promises = [];
-  for (let id of justCompetencyIds) {
-    promises.push(Competency.findById(id).populate("skills"));
+  const justCompetencyIds = Object.keys(competenciesAndSkills);
+  const newCompetenciesObject = {};
+  const promises = [];
+  for (const id of justCompetencyIds) {
+    promises.push(Competency.findById(id).populate('skills'));
   }
   const comps = await Promise.all(promises);
-  for (let id of justCompetencyIds) {
-    let helper = comps.filter(el => el._id == id);
-    let comp = helper[0];
-    for (let skillNumber of competenciesAndSkills[id]) {
+  for (const id of justCompetencyIds) {
+    const helper = comps.filter((el) => el._id == id);
+    const comp = helper[0];
+    for (const skillNumber of competenciesAndSkills[id]) {
       if (skillNumber === 0) {
-        skill = comp.skills.map(el => el._id);
+        skill = comp.skills.map((el) => el._id);
       } else {
-        skill = comp.skills.filter(el => el.number == skillNumber);
+        skill = comp.skills.filter((el) => el.number == skillNumber);
       }
       if (!newCompetenciesObject[id]) newCompetenciesObject[id] = [];
       newCompetenciesObject[id].push(...skill);
@@ -44,10 +46,10 @@ async function findSkillIds(competenciesAndSkills) {
 }
 
 function makeArrayForModel(competenciesAndSkills) {
-  let keys = Object.keys(competenciesAndSkills);
-  let newArray = [];
-  keys.forEach(key => {
-    let compsObject = { competency: key, skills: competenciesAndSkills[key] };
+  const keys = Object.keys(competenciesAndSkills);
+  const newArray = [];
+  keys.forEach((key) => {
+    const compsObject = { competency: key, skills: competenciesAndSkills[key] };
     newArray.push(compsObject);
   });
   return newArray;
@@ -55,26 +57,32 @@ function makeArrayForModel(competenciesAndSkills) {
 
 module.exports = class CompetenciesAndSkills {
   constructor(skills, oldSkills = []) {
-      this.skillsSet = new Set(oldSkills)
+    this.skillsSet = new Set(oldSkills);
     this.unparsedSkills = skills;
+    // IIFE below. outputs: {compNum: [skills], compNum: [skills],...}
     this.skillsMap = (() => {
-      let competenciesAndSkills = {};
-      let skillsArray = [];
-      let skills = this.unparsedSkills.split(",");
-      skills.forEach(skill => {
-          this.skillsSet.add(skill);
-        })
-        console.log(this.skillsSet)
-        Array.from(this.skillsSet).forEach(skill => {
-          let splitSkills = skill.split("."); //this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
-          skillsArray.push(splitSkills);
+      const competenciesAndSkills = {};
+      const skillsArray = [];
+      const s = this.unparsedSkills.split(',');
+
+      s.forEach((skill) => {
+        this.skillsSet.add(skill);
       });
-      for (let skill of skillsArray) {
-        if (isNaN(skill[0])) continue;
-        if (!competenciesAndSkills[skill[0]])
-          competenciesAndSkills[skill[0]] = [];
+
+      Array.from(this.skillsSet).forEach((skill) => {
+        const splitSkills = skill.split('.'); // this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
+        skillsArray.push(splitSkills);
+        console.log(splitSkills);
+      });
+
+      // skillsArray: [[compNum, skillNum], [compNum, skillNum]...]
+      for (const skill of skillsArray) {
+        if (isNaN(skill[0])) {
+          throw new TypeError(`'${skill[0]}' is not a valid competency`);
+        }
+        if (!competenciesAndSkills[skill[0]]) { competenciesAndSkills[skill[0]] = []; }
         if (skill[1] === undefined) competenciesAndSkills[skill[0]].push(0);
-        //zero to keep NaNs out of my code. this will end up just pushing every skill.
+        // zero to keep NaNs out of my code. this will end up just pushing every skill.
         else {
           competenciesAndSkills[skill[0]].push(Number(skill[1]));
           competenciesAndSkills[skill[0]].sort((a, b) => a - b);
@@ -83,12 +91,14 @@ module.exports = class CompetenciesAndSkills {
       return competenciesAndSkills;
     })();
   }
+
   async init() {
-    this.compIDAndSkills = await findCompetencyIds(this.skillsMap);
-    this.compIdsAndSkillIds = await findSkillIds(this.compIDAndSkills);
+    this.compIdAndSkills = await findCompetencyIdsAndSkillNumbers(this.skillsMap);
+    this.compIdsAndSkillIds = await findSkillIds(this.compIdAndSkills);
     this.skillIdsArray = makeArrayForModel(this.compIdsAndSkillIds);
   }
+
   static fromIterator(array, oldArray = []) {
-      return new CompetenciesAndSkills(array.join(), oldArray)
+    return new CompetenciesAndSkills(array.join(), oldArray);
   }
 };

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const skillSchema = new mongoose.Schema({
   name: String,
@@ -7,11 +7,11 @@ const skillSchema = new mongoose.Schema({
   subSkills: [
     {
       name: String,
-      number: Number
-    }
-  ]
+      number: Number,
+    },
+  ],
 });
 
-const Skill = mongoose.model("Skill", skillSchema)
+const Skill = mongoose.model('Skill', skillSchema);
 
-module.exports = Skill
+module.exports = Skill;

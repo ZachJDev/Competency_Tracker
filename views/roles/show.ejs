@@ -14,12 +14,12 @@
 <% role.competenciesAndSkills.forEach(comp => { %>
     <div class="list-items">
         <li class="competency">
-           <form action="/competencies/<%= comp.competency._id %>" method="GET" > <button class="not-button"><h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3></button></form><form class="competency-delete " id="form"action="/roles/<%=role._id%>/competency/<%=comp.competency._id%>?_method=PUT" method=POST><button  class="delete">Remove</button> </form>
+           <form action="/competencies/<%= comp.competency._id %>" method="GET" > <button class="not-button"><h3 class="s-heading"><%=comp.competency.number%>: <%=comp.competency.name%></h3></button></form><form class="competency-delete " id="form"action="/roles/<%=role._id%>/remove/?type=competency&number=<%= comp.competency.number%>&_method=PUT" method=POST><button  class="delete">Remove</button> </form>
         </li>
         <ul class="skills-list">
             <% comp.skills.forEach(skill => { %>
                 <li class="skill catch">
-                    <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %></h4><form class="skill-delete invisible" id="form"action="/roles/<%=role._id%>/skill/<%=skill._id%>?_method=PUT" method=POST><button  class="delete ">Remove</button> </form>
+                    <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %></h4><form class="skill-delete invisible" id="form"action="/roles/<%=role._id%>/remove/?type=skill&number=<%=skill.number%>&competency=<%=comp.competency.number%>&_method=PUT" method=POST><button  class="delete ">Remove</button> </form>
                 </li>
                 <ul class="subskills-list">
                     <% skill.subSkills.forEach(subskill => { %>

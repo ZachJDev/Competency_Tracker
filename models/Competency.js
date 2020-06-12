@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 
 const competencySchema = new mongoose.Schema({
@@ -7,9 +7,9 @@ const competencySchema = new mongoose.Schema({
   number: Number,
   topic: [{ name: String, description: String }],
   deletedSkills: [Number],
-  skills: [{type: mongoose.Schema.Types.ObjectId, ref: "Skill"}]
+  skills: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Skill' }],
 });
 
-const Competency = mongoose.model("Competency", competencySchema);
+const Competency = mongoose.model('Competency', competencySchema);
 
 module.exports = Competency;
