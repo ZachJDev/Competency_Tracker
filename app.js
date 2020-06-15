@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const request = require('request');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
@@ -17,12 +16,6 @@ const skillRoutes = require('./routes/Skills');
 const roleRoutes = require('./routes/Roles');
 const indexRoutes = require('./routes/index');
 const subSkillRoutes = require('./routes/subSkills');
-
-// Mongoose setup:
-// mongodb://localhost/CompetencyTracker
-// I've been having troubling keeing environmental variables straight between my computers,
-// so until this is hosted anywhere, mongoose will stay connected like this.
-// process.env.DATABASEURL
 
 // seedDB();
 
