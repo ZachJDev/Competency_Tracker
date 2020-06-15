@@ -1,11 +1,8 @@
 const express = require('express');
 
 const router = express.Router({ mergeParams: true });
-
 const competenciesController = require('../Controllers/competencies');
-
 const middleware = require('./internal-modules/middleware.js');
-
 
 // competencies routes
 // index

@@ -1,8 +1,8 @@
 const express = require('express');
+const roleController = require('../Controllers/roles');
 
 const router = express.Router({ mergeParams: true });
 
-const roleController = require('../Controllers/roles');
 // roles routes. uses "/roles"
 // index
 router.get('/', roleController.index);

@@ -1,53 +1,30 @@
-const Role = require('../models/Role.js');
+
 const Skill = require('../models/Skill');
 const Competency = require('../models/Competency.js');
 
 
-// I'm thinking that I can't sort subSkills, because that seems like
-// a much cleaner solution than what I've done here.
-
-function findInsertionIndex(number, skillNumbers) {
-  // I'll need to rewrite this as a for loop if i don't want it to iterate through the entire array.
-  // and of course I should also refactor this and the same function for skills into one spot.
-  let newIndex = 0;
-  skillNumbers.forEach((el, index, array) => {
-    if (number > array[index].number && number < array[index + 1].number) {
-      newIndex = index + 1;
-    }
-  });
-  return newIndex;
-}
-
 exports.new = (req, res) => {
+  let sendCompetency;
   Competency.findById(req.params.id)
     .then((competency) => {
-      const sendCompetency = competency;
-      Skill.findById(req.params.skill_id)
-        .then((skill) => {
-          try {
-            const sendSkill = skill;
-            const count = skill.deletedSubSkills.length
-              ? skill.deletedSubSkills.shift()
-              : skill.subSkills.length + 1;
-            skill.save();
-            res.render('../views/subskills/new', {
-              count,
-              competency: sendCompetency,
-              skill: sendSkill,
-            });
-          } catch (error) {
-            res.send('OOPS!'); // fix error handling
-          }
-        })
-        .catch((err) => {
-          res.send('OOPS!'); // fix error handling
-        });
+      sendCompetency = competency;
+      return Skill.findById(req.params.skill_id);
+    })
+    .then((skill) => {
+      const count = skill.deletedSubSkills.length
+        ? skill.deletedSubSkills[0]
+        : skill.subSkills.length + 1;
+      res.render('../views/subskills/new', {
+        count,
+        competency: sendCompetency,
+        // eslint-disable-next-line object-shorthand
+        skill: skill,
+      });
     })
     .catch((err) => {
-      res.send('OOPS!'); // fix error handling
+      res.send(err); // fix error handling
     });
 };
-
 
 exports.create = (req, res) => {
   const newSubSkill = {
@@ -56,34 +33,12 @@ exports.create = (req, res) => {
   };
   Skill.findById(req.params.skill_id)
     .then((skill) => {
-      try {
-        const { subSkills } = skill;
-        if (subSkills.length) {
-          if (newSubSkill.number < subSkills[0].number) {
-            // insert at front
-            skill.subSkills.splice(0, 0, newSubSkill);
-            skill.save().then(res.redirect(`/competencies/${req.params.id}`));
-          } else if (
-            newSubSkill.number > subSkills[subSkills.length - 1].number
-          ) {
-            // insert at back (combine with the outer else?)
-            skill.subSkills.push(newSubSkill);
-            skill.save().then(res.redirect(`/competencies/${req.params.id}`));
-          } else {
-            // insert in the middle
-            const newIndex = findInsertionIndex(newSubSkill.number, subSkills);
-            skill.subSkills.splice(newIndex, 0, newSubSkill);
-            console.log(skill.subSkills);
-            skill.save().then(res.redirect(`/competencies/${req.params.id}`));
-          }
-        } else {
-          // when there are no
-          skill.subSkills.push(newSubSkill);
-          skill.save().then(res.redirect(`/competencies/${req.params.id}`));
-        }
-      } catch (error) {
-        res.send('OOPS!'); // fix error handling
-      }
+      skill.subSkills.push(newSubSkill);
+      skill.subSkills.sort((a, b) => a.number - b.number);
+      skill.deletedSubSkills.shift();
+      return skill.save();
+    }).then((skill) => {
+      res.redirect(`/competencies/${req.params.id}`);
     })
     .catch((err) => {
       res.send('OOPS!'); // fix error handling
@@ -130,21 +85,16 @@ exports.update = (req, res) => {
 exports.destory = (req, res) => {
   Skill.findByIdAndUpdate(req.params.skill_id)
     .then((skill) => {
-      // I feel like all of these nested .then()s might miss the point of doing them. OR I'm using them correctly, and it's just what one has to do to do nested asychronous calls.
       const subSkill = skill.subSkills.id(req.params.subskill_id);
       const subSkillIndex = skill.subSkills.findIndex(
         (element) => element == subSkill,
       );
       skill.subSkills.splice(subSkillIndex, 1);
       skill.deletedSubSkills.push(subSkill.number);
-      // I need to write a sort function that works with numbers and not strings.
-      skill
-        .save()
-        .then(res.redirect(`/competencies/${req.params.id}`))
-        .catch((err) => {
-          res.send('OOPS!'); // fix error handling
-        });
-    })
+      // This should ensure that the user will always have the lowest deleted subskill number
+      skill.deletedSubSkills.sort((a, b) => a - b);
+      return skill.save();
+    }).then(res.redirect(`/competencies/${req.params.id}`))
     .catch((err) => {
       res.send('OOPS!'); // fix error handling
     });

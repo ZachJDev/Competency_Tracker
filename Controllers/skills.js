@@ -22,17 +22,16 @@ exports.create = (req, res) => {
     name: req.body.name,
     number: req.body.number,
   };
-  Skill.create(newSkill).then((skill) => {
-    Competency.findByIdAndUpdate(
-      req.params.id,
-      { $push: { skills: skill }, $pop: { deletedSkills: -1 } },
-      { useFindAndModify: false },
-    )
-      .then(res.redirect(`/competencies/${req.params.id}`))
-      .catch((err) => {
-        console.log(err); // fix error handling
-      });
-  });
+  Skill.create(newSkill).then((skill) => Competency.findByIdAndUpdate(
+    req.params.id,
+    { $push: { skills: skill }, $pop: { deletedSkills: -1 } },
+    { useFindAndModify: false },
+  )
+    .then(res.redirect(`/competencies/${req.params.id}`))
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log(err); // fix error handling
+    }));
 };
 
 exports.edit = (req, res) => {
@@ -42,7 +41,7 @@ exports.edit = (req, res) => {
       foundSkill = skill;
       return Competency.findById(req.params.id);
     })
-    .then((competency) => res.render('skills/edit', { foundSkill, competency }))
+    .then((competency) => res.render('skills/edit', { skill: foundSkill, competency }))
     .catch((err) => {
       res.send('OOPS'); // fix error handling
     });
@@ -93,6 +92,7 @@ exports.destroy = (req, res) => {
     .then(() => Skill.findByIdAndRemove(req.params.skill_id))
     .then(res.redirect('/competencies'))
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.log(err);
     });
 };

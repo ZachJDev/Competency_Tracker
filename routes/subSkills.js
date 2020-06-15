@@ -1,8 +1,8 @@
 const express = require('express');
+const subSkillsController = require('../Controllers/subSkills');
 
 const router = express.Router({ mergeParams: true });
 
-const subSkillsController = require('../Controllers/subSkills');
 
 // New
 router.get('/new', subSkillsController.new);

@@ -1,9 +1,9 @@
 const express = require('express');
+const middleware = require('./internal-modules/middleware');
+const skillsController = require('../Controllers/skills');
 
 const router = express.Router({ mergeParams: true });
 
-const middleware = require('./internal-modules/middleware');
-const skillsController = require('../Controllers/skills');
 // Skill routes
 
 // New
@@ -13,7 +13,7 @@ router.get('/new', middleware.checkForCompetency, skillsController.new);
 router.post('/', middleware.checkForCompetency, skillsController.create);
 
 // Edit
-router.get('/:skill_id/edit', middleware.checkForCompetency, middleware.checkForSkill);
+router.get('/:skill_id/edit', middleware.checkForCompetency, middleware.checkForSkill, skillsController.edit);
 
 // Update
 router.put('/:skill_id', middleware.checkForCompetency, middleware.checkForSkill, skillsController.update);
