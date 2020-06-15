@@ -3,7 +3,6 @@ const subSkillsController = require('../Controllers/subSkills');
 
 const router = express.Router({ mergeParams: true });
 
-
 // New
 router.get('/new', subSkillsController.new);
 
