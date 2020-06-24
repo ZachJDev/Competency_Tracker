@@ -8,7 +8,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "say-hello": " sloth .1 \"echo 'hello'\" "
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +22,8 @@
     "mongodb": "^3.3.4",
     "mongoose": "^5.7.9",
     "mongoose-autopopulate": "^0.10.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "sloth-cli": "^1.0.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

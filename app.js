@@ -27,7 +27,7 @@ app.use('/competencies/:id/skills', skillRoutes);
 app.use('/competencies/:id/skills/:skill_id/subskills', subSkillRoutes);
 app.use(express.static('public'));
 
-mongoose.connect(`${process.env.LOCAL_MONGODB}CompetencyTracker`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(`${process.env.DATABASEURL}CompetencyTracker`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
   // eslint-disable-next-line no-console
   app.listen(port, () => console.log('server up'));
 });
