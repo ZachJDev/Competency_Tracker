@@ -18,7 +18,6 @@ const roleRoutes = require('./routes/Roles');
 const indexRoutes = require('./routes/index');
 const subSkillRoutes = require('./routes/subSkills');
 
-// seedDB();
 
 // express setup
 app.use('/', indexRoutes);
