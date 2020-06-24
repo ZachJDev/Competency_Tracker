@@ -5,6 +5,7 @@ const methodOverride = require('method-override');
 
 const app = express();
 const port = process.env.PORT || 5500;
+const database = process.env.DATABASEURL;
 
 app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
@@ -27,7 +28,7 @@ app.use('/competencies/:id/skills', skillRoutes);
 app.use('/competencies/:id/skills/:skill_id/subskills', subSkillRoutes);
 app.use(express.static('public'));
 
-mongoose.connect(`${process.env.DATABASEURL}`, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+mongoose.connect(database, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
   // eslint-disable-next-line no-console
   app.listen(port, () => console.log('server up'));
 });
