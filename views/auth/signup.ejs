@@ -1,0 +1,50 @@
+<%-include('../partials/header')%>
+<div class="form-whole">
+    <h2>Sign Up</h2>
+    <form action="/signup" method="post">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password">
+        </div>
+        <div class="form-group">
+            <label for="confrmPassword">Confirm Password</label>
+            <input type="password" name="confirmPassword" id="confirmPassword">
+        </div>
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input class="checkbox" type="checkbox" name="newInstitution" id="newInstitution">
+                <label for="newInstitution">New Insitution?</label>
+                <div class="form-group hidden" id="newInstitutionName">
+                    <label for="institutionName">Institution Name</label>
+                    <input type="text" name="institutionName" id="institutionName">
+                </div>
+        </div>
+        </div>
+        <div class="form-group">
+            <label for="institutionPassword">Institution Password</label>
+            <input type="password" name="institutionPassword" id="institutionPassword">
+        </div>
+        <div class="form-group hidden" id="confirmNewPassword">
+            <label for="confirmInstitutionPassword">Confirm Institution Password</label>
+            <input type="password" name="confirmInstitutionPassword" id="confirmInstitutionPassword">
+        </div>
+        <div class="button-group">
+            <div class="form-group submit form-button">
+                    <button type="submit">Sign Up</button>
+                </div>
+                <div class="form-group cancel form-button">
+                    <button>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<%- include('../partials/footer') %> 

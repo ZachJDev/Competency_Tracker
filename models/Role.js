@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const roleSchema = new mongoose.Schema({
   name: String,
   description: String,
+  institution: String,
   rawSkills: [String],
   competenciesAndSkills: [
     {
@@ -22,8 +23,8 @@ roleSchema.methods.generateRawSkillsAndSave = function () {
   const newSkills = [];
   const cs = this.competenciesAndSkills;
 
-  for (comp of cs) {
-    for (skill of comp.skills) {
+  for (const comp of cs) {
+    for (const skill of comp.skills) {
       newSkills.push(`${comp.competency.number}.${skill.number}`);
     }
   }

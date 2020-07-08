@@ -1,0 +1,113 @@
+.main-info {
+    font-size: 1.3rem;
+    margin: 0.8rem 0 1rem 0;
+    padding-bottom: 0.3rem;
+    border-bottom: 3px solid #33333319;
+    text-align: left;
+  }
+  
+  .body-content-show .utilities {
+    margin: 0.4rem;
+    margin-top: 0.7rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: baseline;
+  }
+  
+  .body-content-show .utilities .delete {
+    margin-left: 20px;
+    font-size: 1.2rem;
+  }
+  
+  .body-content-show .skill-delete {
+    align-self: flex-end;
+  }
+  .body-content-show .list-items {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.2rem;
+  }
+  
+  .body-content-show .list-items:nth-child(2n),
+  .body-content-show .list-items:nth-child(2n) .delete,
+  .body-content-show .list-items:nth-child(2n) .not-button {
+    background-color: #e2e2e2;
+  }
+  
+  .body-content-show .subskill,
+  .body-content-show .skill {
+    display: flex;
+  }
+  .body-content-show .list-items .skills-list .skill{
+    margin: .2rem .4rem .5rem 1rem;
+  }
+  .body-content-show .list-items .skills-list .skill{
+    margin: .2rem 1rem .5rem 1rem;
+  }
+  
+  .body-content-show .list-items .skills-list .skill .skill-delete {
+    margin-left: .5rem ;
+  }
+  
+  .body-content-show .list-items .skills-list .subskills-list .subskill {
+    margin-left: 2rem;
+  }
+  .body-content-show .list-items .skills-list .subskills-list .subskill h4 {
+    font-size: .9rem;
+  }
+  
+  .body-content-show .list-items .btn {
+    align-self: flex-end;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+    margin: auto 0.3rem 0 0.3rem;
+  }
+  
+  .body-content-show .subskill,
+  .body-content-show .subskill-add {
+    margin: 0.8rem 0 0.8rem 0.9rem;
+  }
+  .body-content-show .skill-add {
+    margin-top: 2rem;
+  }
+  
+  .body-content-show .skill-add .btn {
+    padding: 0.5rem;
+    font-size: 1.4rem;
+  }
+  
+  .body-content .btn.btn-add {
+    position: fixed;
+    bottom: 5vh;
+    right: 5vh;
+    background-color: #40b33f;
+  }
+
+  /* roles show */
+
+.role-content {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+  }
+  
+  .role-content .role-classes,
+  .role-content .role-skills {
+    width: 50%;
+    height: 100%;
+    text-align: left;
+  }
+  .role-content .role-classes {
+    border-left: #333333 solid 3px;
+  }
+  
+  .role-content .role-skills .competency {
+    display: flex;
+  }
+  .role-content .role-skills .competency form {
+    align-self: center;
+    margin-left: 0.5rem;
+  }
+  
+  .role-content .role-skills .competency button {
+    font-size: 1rem;
+  }

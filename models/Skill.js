@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const skillSchema = new mongoose.Schema({
   name: String,
   number: Number,
+  institution: String,
   deletedSubSkills: [Number],
   subSkills: [
     {

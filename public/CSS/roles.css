@@ -1,0 +1,33 @@
+#list .role-and-competencies {
+    padding-bottom: 10px;
+    justify-content: space-between;
+  }
+  #list .role-and-competencies:nth-child(2n) {
+    background-color: #e2e2e2;
+  }
+
+  #list .description {
+    padding-top: 7px;
+    padding-left: 10px;
+    align-self: flex-end;
+  }
+  
+  #list .role {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  #list .role a, #list .role p {
+    flex: 1;
+  }
+  
+  #list .role-competencies {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .body-content #list .role-and-competencies .competency .role-competency .role-skill-list li  {
+    margin: .25rem .5rem ;
+  }

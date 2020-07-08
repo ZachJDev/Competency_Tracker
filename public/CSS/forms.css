@@ -1,0 +1,111 @@
+.form-whole {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    margin: 40px 0 40px 200px;
+    width: 80%;
+    align-items: center;
+  }
+  
+  .form-whole .m-heading:hover {
+    color: #333333;
+  }
+  
+  .form-whole .form-group {
+    margin: 1rem 0 1rem 0;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: stretch; */
+  }
+  .form-whole .form-group label {
+    flex: 2;
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+  }
+  .form-whole .form-group input {
+    font-size: 1rem;
+    padding: 0.2rem;
+    flex: 3;
+    flex: 1 1 auto;
+    font-size: 1.4rem;
+  }
+  
+  .form-whole .form-group textarea {
+    height: 240px;
+    width: 360px;
+    flex: 1 1 auto;
+    font-size: 1.3rem;
+  }
+  
+  .form-whole .form-group input,
+  .form-whole .form-group textarea {
+    margin-left: 1.2rem;
+    background-color: #f8f8f8;
+    border: 1px solid black;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+  }
+  
+  .form-whole .form-group input:focus,
+  .form-whole .form-group textarea:focus {
+    border: 2px solid #40b33f90;
+  }
+  .form-whole .form-group .checkbox-group #newInstitutionName.hidden,
+  .form-whole .form-group .checkbox-group #confirmNewPassword.hidden {
+    display: none;
+  }
+  
+  .form-whole .form-group.form-number {
+    display: none;
+  }
+  
+  .form-whole .button-group {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .form-whole label {
+    margin: 0.3rem;
+    padding-left: 12px;
+  }
+  
+  .form-whole .form-button button,
+  .form-whole .form-button a {
+    height: 60px;
+    max-width: 200px;
+    min-width: 150px;
+    border: none;
+    border-radius: 3px;
+    font-size: 1.3rem;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+  }
+  
+  .form-whole .form-button button:hover {
+    cursor: pointer;
+  }
+  
+  .form-whole .form-button.submit button {
+    background-color: #40b33f;
+  }
+  .form-whole .form-button.submit button:hover {
+    background-color: #4ece4c;
+  }
+  
+  .form-whole .form-button.cancel a {
+    text-align: center;
+    background-color: #e2e2e2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: #333333;
+  }
+  
+  .form-whole .form-button.cancel a:hover {
+    background-color: #a09c9c;
+  }

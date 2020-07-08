@@ -128,3 +128,18 @@ const createRegex = function (string) {
   });
   return new RegExp(expression, 'i');
 };
+
+// Show/Hide options for new institutions
+(function institutionNameToggle() {
+  try {
+    const input = document.getElementById('newInstitutionName');
+    const password = document.getElementById('confirmNewPassword');
+    const checkbox = document.getElementById('newInstitution');
+    checkbox.addEventListener('change', () => {
+      input.classList.toggle('hidden');
+      password.classList.toggle('hidden');
+    });
+  } catch (e) {
+
+  }
+}());

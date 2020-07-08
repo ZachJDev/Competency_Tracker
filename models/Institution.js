@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 
 const institutionSchema = new mongoose.Schema({
-  name: String,
-  password: String,
+  institutionName: {
+    type: String,
+
+  },
+  institutionPassword: String,
   defaultReadOnly: {
     type: Boolean,
     default: false,

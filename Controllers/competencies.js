@@ -100,7 +100,8 @@ exports.destroy = (req, res) => {
           {},
           { $push: { count: { $each: [competency.number], $sort: 1 } } },
           { upsert: true },
-        ), // redundant with the create route, but if there's some circumstance where the counter doesn't get created when the first competency does, this should hopefully catch itW
+        ), // redundant with the create route, but if there's some circumstance where
+        // The counter doesn't get created when the first competency does, this should catch it
       );
       return Role.updateMany(
         {

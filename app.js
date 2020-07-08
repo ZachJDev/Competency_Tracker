@@ -4,16 +4,19 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
+const helmet = require('helmet');
 
 
 const app = express();
 const port = process.env.PORT || 5500;
 const database = process.env.COMP_DATABASEURL;
+
+// Not the most secure way to store secrets, but this isn't a production environment soooo...
 const secret = JSON.parse(process.env.SECRET);
 
 app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
-
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true })); // This has to be BEFORE the routes.
 
 // routes
@@ -22,12 +25,13 @@ const skillRoutes = require('./routes/Skills');
 const roleRoutes = require('./routes/Roles');
 const indexRoutes = require('./routes/index');
 const subSkillRoutes = require('./routes/subSkills');
+const authRoutes = require('./routes/auth');
 const middleware = require('./routes/internal-modules/middleware');
 
 // Session and sessionStore setup.
 
 const store = new MongoDbStore({
-  uri: process.env.DATABASEURL,
+  uri: database,
   collection: 'sessions',
 });
 
@@ -35,6 +39,7 @@ const store = new MongoDbStore({
 app.use(
   session({
     secret,
+    name: 'sessionId',
     resave: false,
     saveUninitialized: false,
     store,
@@ -43,8 +48,10 @@ app.use(
 
 // express setup
 
-app.use('/', middleware.findUserSession);
+app.use(middleware.findUserSession);
+
 app.use('/', indexRoutes);
+app.use('/', authRoutes);
 app.use('/roles', roleRoutes);
 app.use('/competencies', competencyRoutes);
 app.use('/competencies/:id/skills', skillRoutes);

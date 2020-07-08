@@ -1,0 +1,113 @@
+#list .competency {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  #list .competency a, #list .competency p {
+    flex: 1;
+  }
+  
+  #list .competency-and-skill,
+  #list .role-and-competencies {
+    padding-bottom: 10px;
+    justify-content: space-between;
+  }
+  
+  #list .competency-and-skill:nth-child(2n),
+  #list
+    .competency-and-skill:nth-child(2n)
+    .skill-list
+    .skill
+    .skill-delete
+    .delete,
+  #list .role-and-competencies:nth-child(2n) {
+    background-color: #e2e2e2;
+  }
+  
+  #list .description {
+    padding-top: 7px;
+    padding-left: 10px;
+    align-self: flex-end;
+  }
+  #list .skill-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  #list .skill-list .skill {
+    padding: 0.2rem 0 0 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+  }
+  
+  #list .skill-list .skill-add {
+    padding: 0.2rem 0 0 2rem;
+  }
+  
+  #list .skill-list .skill .skill-delete {
+    align-self: flex-end;
+    transition: opacity 0.1s;
+    -webkit-transition: opacity 0.1s;
+    -moz-transition: opacity 0.1s;
+    -ms-transition: opacity 0.1s;
+    -o-transition: opacity 0.1s;
+  }
+  #list .skill-list .skill .skill-delete .delete {
+    margin: 0 0 0 0.4rem;
+    font-size: 0.9rem;
+  }
+  
+  #list .skill-list .skill .skill-edit {
+    font-size: 0.75rem;
+    margin: 0 0 0 0.4rem;
+    align-self: flex-end;
+    transition: opacity 0.1s;
+    -webkit-transition: opacity 0.1s;
+    -moz-transition: opacity 0.1s;
+    -ms-transition: opacity 0.1s;
+    -o-transition: opacity 0.1s;
+  }
+  
+  #list .skill-list .subskill-add {
+    margin: 1rem 0 1rem 2.5rem;
+  }
+  
+  #list .skill-list .subskill-add .btn {
+    font-size: 0.75rem;
+  }
+  
+  #list .skill-list .subskill-add .btn:hover {
+    color: #40b33f;
+  }
+  
+  #list .skill-list .subskills-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+  
+  #list .skill-list .subskills-list .subskill {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin: 0.5rem 0 0.5rem 2.5rem;
+  }
+  
+  #list .skill-list .subskills-list .subskill .delete {
+    margin-left: 5px;
+  }
+  
+  #list .skill-list .subskills-list .subskill-edit {
+    font-size: 0.8rem;
+    margin-left: 0.4rem;
+    padding: 0.2rem;
+    transition: opacity 0.1s;
+    -webkit-transition: opacity 0.1s;
+    -moz-transition: opacity 0.1s;
+    -ms-transition: opacity 0.1s;
+    -o-transition: opacity 0.1s;
+  }
