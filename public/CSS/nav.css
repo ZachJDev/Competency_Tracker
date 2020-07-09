@@ -35,11 +35,21 @@
   #navbar #logo-container .login span {
     font-size: 1.4rem;
   }
-  #navbar #logo-container a {
+  #navbar #logo-container .logo-box-link {
     color: #f2f2f2;
   }
-  #navbar #logo-container a:hover {
+  #navbar #logo-container .logo-box-link:hover {
     color: #90e28f;
+  }
+
+  #navbar #logo-container .logged-in-links {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: .4rem;
+    }
+  #navbar #logo-container .not-button {
+    background-color: inherit;
+    font-size: 1.1rem;
   }
   
   #navbar #navigation {

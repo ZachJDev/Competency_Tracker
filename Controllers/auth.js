@@ -7,14 +7,16 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  User.findById('5f051137de6c2840f8dd9356')
-    .then((user) => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      req.session.save((err) => {
-        console.log('akljhsalkjhd');
-        res.redirect('/');
-      });
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .then((user) => bcrypt.compare(password, user.hashedPassword)
+      .then((isMatch) => {
+        if (!isMatch) throw new Error('No user Found');
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        return req.session.save();
+      })).then((err) => {
+      res.redirect('/');
     })
     .catch((err) => console.log(err));
 };
@@ -81,7 +83,7 @@ exports.postSignup = (req, res, next) => {
         const newUser = new User({
           name,
           email,
-          password: hashedPassword,
+          hashedPassword,
           admin: isNewInstitution,
           institution: foundInstitution._id,
           permissions: institution.defaultPermisions,

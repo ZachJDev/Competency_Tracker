@@ -3,6 +3,7 @@ const Competency = require('../../models/Competency');
 const Skill = require('../../models/Skill');
 const User = require('../../models/Users');
 
+
 const middleware = {};
 
 middleware.findUserSession = (req, res, next) => {
@@ -49,6 +50,17 @@ middleware.checkForSkill = (req, res, next) => {
       next();
     }
   });
+};
+
+middleware.addLocals = (req, res, next) => {
+  Object.assign(res.locals, {
+    isLoggedIn: req.session.isLoggedIn,
+    name: req.user ? req.user.name : null,
+    csrfToken: req.csrfToken(),
+    institution: req.user ? req.user.institutionName : null,
+  });
+
+  next();
 };
 
 module.exports = middleware;

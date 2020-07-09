@@ -5,7 +5,10 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const helmet = require('helmet');
+const csrf = require('csurf');
+const errorController = require('./Controllers/error');
 
+const csrfProtection = csrf();
 
 const app = express();
 const port = process.env.PORT || 5500;
@@ -18,7 +21,6 @@ app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true })); // This has to be BEFORE the routes.
-
 // routes
 const competencyRoutes = require('./routes/Competencies');
 const skillRoutes = require('./routes/Skills');
@@ -46,9 +48,12 @@ app.use(
   }),
 );
 
+// Accordinging to https://stackoverflow.com/questions/23997572/error-misconfigured-csrf-express-js-4#23997918
+// The next line must go after session configuration
+app.use(csrfProtection);
 // express setup
 
-app.use(middleware.findUserSession);
+app.use(middleware.findUserSession, middleware.addLocals);
 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
@@ -57,6 +62,7 @@ app.use('/competencies', competencyRoutes);
 app.use('/competencies/:id/skills', skillRoutes);
 app.use('/competencies/:id/skills/:skill_id/subskills', subSkillRoutes);
 app.use(express.static('public'));
+app.use(errorController.get404);
 
 mongoose.connect(database,
   { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })

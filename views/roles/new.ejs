@@ -17,14 +17,16 @@
   <div class="form-group form-skills">
       <label for="skills">Role Skills:</label>
     <input title="enter a competency number by itself to assign all of it's skills to the role" type="text" name="skills" placeholder="seperated by commas">
-</div>
+</di
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">v>
   <div class="button-group">   
-    <div class="form-group cancel form-button">
-      <a href="/roles/"><p>Cancel</p></a>
+    <div class="form-group submit form-button">
+      
+      <button>Add</button>
     </div>
-  <div class="form-group submit form-button">
-    <button>Add</button>
-  </div>
+          <div class="form-group cancel form-button">
+            <a href="/roles/"><p>Cancel</p></a>
+          </div>
 </div>
 </form>
 </div>

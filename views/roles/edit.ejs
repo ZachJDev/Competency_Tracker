@@ -22,6 +22,7 @@
     <div class="form-group cancel form-button">
       <a href="/roles/<%=role._id%>"><p>Cancel</p></a>
     </div>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="form-group submit form-button">
     <button>Add</button>
   </div>

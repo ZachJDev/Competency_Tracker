@@ -3,7 +3,9 @@
 <h4 class="l-heading">Competency # <%= competency.number %>: <%=competency.name %></h4>
 <div class="utilities">
   <a href="/competencies/<%= competency.id %>/edit" class="btn btn-primary">Edit</a>
-  <form  method=POST action="/competencies/<%=competency._id%>/?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this competency?')"> <button class="delete">delete</button>
+  <form  method=POST action="/competencies/<%=competency._id%>/?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this competency?')"> 
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="delete">delete</button>
   </form>
 </div>
 <p class="main-info"><%= competency.description %> </p>
@@ -13,7 +15,7 @@
     <li class="skill catch">
       <h3 class="s-heading"><%=competency.number%>.<%= skill.number%>: <%=skill.name%></h3>
       <a class="skill-edit invisible btn btn-primary" href="/competencies/<%=competency._id%>/skills//<%=skill._id%>/edit">Edit</a>
-      <form class="skill-delete invisible"  method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this skill?')"> <button class="delete btn">delete</button>
+      <form class="skill-delete invisible"  method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this skill?')"> <input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="delete btn">delete</button>
        </form>
       </li>
     <ul class="subskills-list">
@@ -21,7 +23,8 @@
       <li class="subskill">
         <h4 class="xs-heading"><%=competency.number%>.<%=skill.number%>.<%=subSkill.number%>: <%= subSkill.name%> </h4>
         <a class="subskill-edit invisible btn btn-primary" href="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/<%=subSkill._id%>/edit">Edit</a>
-        <form class="subskill-delete invisible" method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/<%=subSkill._id%>?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this subskill?')"> 
+        <form class="subskill-delete invisible" method=POST action="/competencies/<%=competency._id%>/skills/<%=skill._id%>/subskills/<%=subSkill._id%>?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this subskill?')">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
           <button class="delete">delete</button> 
         </form>
       </li>
