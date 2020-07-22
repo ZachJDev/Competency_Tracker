@@ -33,6 +33,7 @@ exports.create = (req, res) => {
         description: roleDescription,
         rawSkills: Array.from(compInfo.skillsSet),
         competenciesAndSkills: compInfo.skillIdsArray,
+        institution: req.user.institutionName,
       }))
       .then(res.redirect('/roles'))
       .catch((err) => console.log(err));

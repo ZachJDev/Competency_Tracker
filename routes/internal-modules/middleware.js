@@ -18,6 +18,14 @@ middleware.findUserSession = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+middleware.isUserAuthenticated = (req, res, next) => {
+  if (req.session.isLoggedIn) next();
+  else {
+    req.flash('error', 'Please Log in');
+    res.redirect('/login');
+  }
+};
+
 middleware.checkForRole = (req, res, next) => {
   Role.findById(req.params.id, (err, foundRole) => {
     if (err || !foundRole) {

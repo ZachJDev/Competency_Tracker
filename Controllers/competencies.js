@@ -5,7 +5,7 @@ const Skill = require('../models/Skill');
 
 
 exports.competenciesIndex = (req, res) => {
-  Competency.find({}, null, { sort: { number: 1 } })
+  Competency.find({ institution: req.user.institutionName }, null, { sort: { number: 1 } })
     .populate({ path: 'skills', options: { sort: { number: 1 } } })
     .exec((err, Competencies) => {
       if (!err) res.render('competencies/index.ejs', { Competencies });
@@ -19,7 +19,7 @@ exports.competenciesIndex = (req, res) => {
 exports.getNew = (req, res) => {
   let number;
   DeletedCompetencyCounter.findOneAndUpdate(
-    {},
+    { institution: req.user.institutionName },
     { $setOnInsert: { count: [] } },
     { upsert: true, sort: { count: -1 }, useFindAndModify: false },
   )
@@ -29,10 +29,12 @@ exports.getNew = (req, res) => {
     })
     .then((num) => {
       if (!num) {
-        return Competency.countDocuments({}, (err, count) => {
-          number = count + 1;
-          return number;
-        });
+        // Count the Competencies to find the next number
+        return Competency.countDocuments({ institution: req.user.institutionName },
+          (err, count) => {
+            number = count + 1;
+            return number;
+          });
       }
       return num;
     })
@@ -40,7 +42,7 @@ exports.getNew = (req, res) => {
       res.render('competencies/new', { count: number }); // the asyc essence of countDocs made it pretty impossible to keep this outside of this callback
     })
     .catch((err) => {
-      res.send('OOPS!'); // fix error handling
+      res.send(err); // fix error handling
     });
 };
 
@@ -49,9 +51,11 @@ exports.create = (req, res) => {
     name: req.body.competencyName,
     description: req.body.description,
     number: req.body.number,
+    institution: req.user.institutionName,
   };
 
-  DeletedCompetencyCounter.findOneAndUpdate({}, { $pop: { count: -1 } },
+  DeletedCompetencyCounter.findOneAndUpdate({ institution: req.user.institutionName },
+    { $pop: { count: -1 } },
     { useFindAndModify: false })
     .then((doc) => doc.save())
     .then(() => Competency.create(newCompetency))
@@ -97,7 +101,7 @@ exports.destroy = (req, res) => {
       }
       promises.push(
         DeletedCompetencyCounter.findOneAndUpdate(
-          {},
+          { institution: req.user.institutionName },
           { $push: { count: { $each: [competency.number], $sort: 1 } } },
           { upsert: true },
         ), // redundant with the create route, but if there's some circumstance where
@@ -117,9 +121,7 @@ exports.destroy = (req, res) => {
         { useFindAndModify: false },
       );
     })
-    .then((result) =>
-      // console.log(result);
-      Promise.all(promises))
+    .then((result) => Promise.all(promises))
     .then(() => Competency.findByIdAndDelete(req.params.id))
     .then(() => res.redirect('/competencies')) // fix error handling
     .catch((err) => {

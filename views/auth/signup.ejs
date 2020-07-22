@@ -1,5 +1,8 @@
 <%-include('../partials/header')%>
 <div class="form-whole">
+    <%if(errorMessage.length > 0)  { %>
+        <div class="error flash-message"><%= errorMessage %></div>
+        <% } %>
     <h2>Sign Up</h2>
     <form action="/signup" method="post">
         <div class="form-group">

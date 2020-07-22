@@ -6,6 +6,9 @@ const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const helmet = require('helmet');
 const csrf = require('csurf');
+const flash = require('connect-flash');
+
+
 const errorController = require('./Controllers/error');
 
 const csrfProtection = csrf();
@@ -53,14 +56,15 @@ app.use(
 app.use(csrfProtection);
 // express setup
 
+app.use(flash());
 app.use(middleware.findUserSession, middleware.addLocals);
 
 app.use('/', indexRoutes);
 app.use('/', authRoutes);
-app.use('/roles', roleRoutes);
-app.use('/competencies', competencyRoutes);
-app.use('/competencies/:id/skills', skillRoutes);
-app.use('/competencies/:id/skills/:skill_id/subskills', subSkillRoutes);
+app.use('/roles', middleware.isUserAuthenticated, roleRoutes);
+app.use('/competencies', middleware.isUserAuthenticated, competencyRoutes);
+app.use('/competencies/:id/skills', middleware.isUserAuthenticated, skillRoutes);
+app.use('/competencies/:id/skills/:skill_id/subskills', middleware.isUserAuthenticated, subSkillRoutes);
 app.use(express.static('public'));
 app.use(errorController.get404);
 

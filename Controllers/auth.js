@@ -3,26 +3,39 @@ const User = require('../models/Users');
 const Institution = require('../models/Institution');
 
 exports.getLogin = (req, res, next) => {
-  res.render('auth/login');
+  // console.log(req.flash('error'));
+  res.render('auth/login', {
+    errorMessage: req.flash('error'),
+  });
 };
 
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
+  let user;
   User.findOne({ email })
-    .then((user) => bcrypt.compare(password, user.hashedPassword)
-      .then((isMatch) => {
-        if (!isMatch) throw new Error('No user Found');
-        req.session.isLoggedIn = true;
-        req.session.user = user;
-        return req.session.save();
-      })).then((err) => {
+    .then((foundUser) => {
+      if (!foundUser) throw new Error('No User Exists');
+      user = foundUser;
+      return bcrypt.compare(password, user.hashedPassword);
+    })
+    .then((isMatch) => {
+      if (!isMatch) throw new Error('No user Found');
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      return req.session.save();
+    }).then((err) => {
       res.redirect('/');
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      req.flash('error', 'invalid login');
+      res.redirect('/login');
+    });
 };
 
 exports.getSignup = (req, res, next) => {
-  res.render('auth/signup');
+  res.render('auth/signup', {
+    errorMessage: req.flash('error'),
+  });
 };
 
 
@@ -70,12 +83,12 @@ exports.postSignup = (req, res, next) => {
     // Found so I confirm that the user is new before doing anything with the information.
     promise.then(() => Institution.findOne({ institutionPassword })).then((i) => {
       foundInstitution = i;
-      User.findOne({ email });
+      if (!foundInstitution) throw new Error('No institution found');
+      return User.findOne({ email });
     })
-
       .then((user) => {
         if (user) {
-          throw new Error('User already exists with that Email address');
+          throw new Error('Invalid email or password');
         }
         return bcrypt.hash(password, 12);
       })
@@ -92,17 +105,23 @@ exports.postSignup = (req, res, next) => {
         return newUser.save();
       })
       .then((result) => {
-        console.log(result);
         // Is it bad to send the plain text password back to login to make it easier to
         // Actually log in? I can probably work out a way to log the user in here automatically.
         res.redirect('/login');
       })
       .catch((err) => {
-        console.log(err.message);
+        req.flash('error', err.message);
         res.redirect('/signup');
       });
-  } catch (e) {
-    console.log(e.message);
+  } catch (err) {
+    req.flash('error', err.message);
     res.redirect('/signup');
   }
+};
+
+exports.logout = (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) console.log(err);
+    res.redirect('/');
+  });
 };

@@ -21,6 +21,7 @@ exports.create = (req, res) => {
   const newSkill = {
     name: req.body.name,
     number: req.body.number,
+    institution: req.user.institutionName,
   };
   Skill.create(newSkill).then((skill) => Competency.findByIdAndUpdate(
     req.params.id,

@@ -8,7 +8,7 @@
       </div>
     <% } else { %>
       <div class="logged-in-links">
-        <form action="#" method="post">
+        <form action="/logout" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button class="not-button" type="submit">
             <p class="logo-box-link">Logout</p>
