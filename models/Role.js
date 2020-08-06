@@ -6,6 +6,7 @@ const roleSchema = new mongoose.Schema({
   description: String,
   institution: String,
   rawSkills: [String],
+  dateUpdated: Date,
   competenciesAndSkills: [
     {
       competency: { type: mongoose.Schema.Types.ObjectId, ref: 'Competency' },

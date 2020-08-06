@@ -3,7 +3,8 @@
     <h4 class="l-heading"><%=role.name%></h4>
     <div class="utilities">
         <a href="/roles/<%= role.id %>/edit" class="btn btn-primary">Edit</a>
-        <form  method=POST action="/roles/<%=role._id%>/?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this competency?')"> 
+        <form  method=POST action="/roles/<%=role._id%>/?_method=DELETE"  onclick="return confirm('Are you sure you want to delete this competency?')">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
             <button class="delete">delete</button>
         </form>
       </div>
@@ -34,6 +35,7 @@
                     <h4 class="xs-heading"><%=comp.competency.number%>.<%=skill.number%>: <%= skill.name %>
                     </h4>
                     <form class="skill-delete invisible" id="form"action="/roles/<%=role._id%>/remove/?type=skill&number=<%=skill.number%>&competency=<%=comp.competency.number%>&_method=PUT" method=POST>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <button  class="delete ">Remove</button> 
                     </form>
                 </li>

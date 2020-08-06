@@ -3,7 +3,7 @@ const Role = require('../models/Role.js');
 
 
 exports.index = (req, res) => {
-  Role.find({}) // I'll need stuff here once I implemenent different institutions and users
+  Role.find({ institution: req.user.institutionName }) // I'll need stuff here once I implemenent different institutions and users
     .populate({ path: 'competenciesAndSkills.competency' })
     .populate({ path: 'competenciesAndSkills.skills' })
     .exec()
@@ -26,7 +26,7 @@ exports.create = (req, res) => {
   const roleName = req.body.name;
   const roleDescription = req.body.description;
   try {
-    const compInfo = new CompetenciesAndSkillsList(req.body.skills);
+    const compInfo = new CompetenciesAndSkillsList(req.body.skills, req.user.institutionName);
     compInfo.init()
       .then(() => Role.create({
         name: roleName,
@@ -34,6 +34,7 @@ exports.create = (req, res) => {
         rawSkills: Array.from(compInfo.skillsSet),
         competenciesAndSkills: compInfo.skillIdsArray,
         institution: req.user.institutionName,
+        dateUpdated: Date.now(),
       }))
       .then(res.redirect('/roles'))
       .catch((err) => console.log(err));
@@ -87,6 +88,7 @@ exports.update = (req, res) => {
           role.rawSkills = Array.from(updateCompeteniesAndSkillsInfo.skillsSet);
           role.name = updatedName;
           role.description = updatedDescription;
+          role.dateUpdated = Date.now();
           return role.save();
         });
     })

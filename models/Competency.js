@@ -8,6 +8,7 @@ const competencySchema = new mongoose.Schema({
   institution: String,
   topic: [{ name: String, description: String }],
   deletedSkills: [Number],
+  dateUpdated: Date,
   skills: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Skill' }],
 });
 

@@ -1,33 +1,37 @@
 <%-include('../partials/header')%>
  <div  class="body-content"> 
-<h1 class="l-heading">Competency Tracker proof-of-concept</h1>
-
-<h3 class="s-heading">This app tracks the roles of an institution, and the competencies and skills that make up those roles.</h3>
-<br>
-<p class="description">Current functionality is limited to roles and competencies, though in the coming weeks I hope to expand this into a system capable of planning, creating, and tracking an institution's entire training curriculum.</p>
-<br>
-<p>Future features include:</p>
-<br>
-<ul>
-    <li>More opportunities for collaboration between users</li>
-    <li>Tie roles/competencies to institutions</li>
-    <li>Tracking ability for classes</li>
-    <li>Automatic class-list generation for roles</li>
-    <li>Search implemented for roles</li>
-    <li>Better error handling</li>
-</ul>
-<br>
-<p>Finished:</p>
-<br>
-    <ul>
-        <li>institution tracking</li>
-        <li>user authentication and user roles <span style="text-decoration: line-through;">(right now, the login and sign-up links do not do anything)</span></li>
-        <li>CSRF Protection</li>
-    </ul>
-<br>
-<p>Please note that this is NOT a stable production environment; things will change and the database will be reset often.</p>
-<br>
-<p><a href="https://github.com/ZachJDev/Competency_Tracker"> Check out the project on GitHub.</a> Please send any bug reports or comments to <a href="mailto:ZachJDev2121@gmail.com">ZachJDev2121@gmail.com</a></p>
-</div>
-</div>
+     <% if(isLoggedIn) { %> 
+        <h1>Welcome, <%=name %>!</h1>
+        <div class="dashboard">
+            <div class="competencies">
+                <h2>Most Recently Updated competencies:</h2>
+                <ul class="dashboard-competences">
+                    <% competencies.forEach(comp =>  { %>
+                        <li class="competency">
+                            <form action="/competencies/<%= comp._id %>" method="GET" > 
+                             <button class="not-button">
+                                 <h3 class="s-heading"><%=comp.number%>: <%=comp.name%></h3>
+                             </button>
+                             </form>
+                   <% }) %> 
+                </ul>
+            </div>
+            <div class="dashboard-roles">
+                <h2>Most Recently Updated roles:</h2>
+                <% roles.forEach(role =>  { %>
+                    <li class="role">
+                        <form action="/roles/<%= role._id %>" method="GET" > 
+                         <button class="not-button">
+                             <h3 class="s-heading"><%=role.name%></h3>
+                         </button>
+                         </form>
+               <% }) %> 
+            </div>
+        </div>
+     <% } else { %> 
+        <h1>Welcome!</h1>
+        <div class="invitation">
+        <h3>Please <a>Log in</a> or <a>Sign up</a> to see your dashboard.</h3>
+    </div>
+     <% } %> 
 <%-include('../partials/footer')%>

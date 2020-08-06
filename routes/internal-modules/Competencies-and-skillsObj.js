@@ -5,17 +5,16 @@ function objectKeysToNumbers(object) {
   return Object.keys(object).map((key) => Number(key));
 }
 
-async function findCompetencyIdsAndSkillNumbers(skillsObj) {
+async function findCompetencyIdsAndSkillNumbers(skillsObj, institution) {
   const competencyIdsAndSkillNumbers = {};
   const competencyNumbers = objectKeysToNumbers(skillsObj);
   const promises = [];
   for (const number of competencyNumbers) {
-    promises.push(Competency.findOne({ number }, { number: 1 }));
+    promises.push(Competency.findOne({ number, institution }, { number: 1 }));
   }
   const result = await Promise.all(promises);
   for (const el of result) {
-    if (el === null) continue;
-    competencyIdsAndSkillNumbers[el._id] = skillsObj[el.number];
+    if (el !== null) competencyIdsAndSkillNumbers[el._id] = skillsObj[el.number];
   }
 
   return competencyIdsAndSkillNumbers;
@@ -56,7 +55,9 @@ function makeArrayForModel(competenciesAndSkills) {
 }
 
 module.exports = class CompetenciesAndSkills {
-  constructor(skills, oldSkills = []) {
+  constructor(skills, institution, oldSkills = []) {
+    this.institution = institution;
+    console.log(this.institution);
     this.skillsSet = new Set(oldSkills);
     this.unparsedSkills = skills;
     // IIFE below. outputs: {compNum: [skills], compNum: [skills],...}
@@ -72,7 +73,6 @@ module.exports = class CompetenciesAndSkills {
       Array.from(this.skillsSet).forEach((skill) => {
         const splitSkills = skill.split('.'); // this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
         skillsArray.push(splitSkills);
-        console.log(splitSkills);
       });
 
       // skillsArray: [[compNum, skillNum], [compNum, skillNum]...]
@@ -93,8 +93,8 @@ module.exports = class CompetenciesAndSkills {
   }
 
   async init() {
-    this.compIdAndSkills = await findCompetencyIdsAndSkillNumbers(this.skillsMap);
-    this.compIdsAndSkillIds = await findSkillIds(this.compIdAndSkills);
+    this.compIdAndSkills = await findCompetencyIdsAndSkillNumbers(this.skillsMap, this.institution);
+    this.compIdsAndSkillIds = await findSkillIds(this.compIdAndSkills, this.institution);
     this.skillIdsArray = makeArrayForModel(this.compIdsAndSkillIds);
   }
 

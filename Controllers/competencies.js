@@ -52,6 +52,7 @@ exports.create = (req, res) => {
     description: req.body.description,
     number: req.body.number,
     institution: req.user.institutionName,
+    dateUpdated: Date.now(),
   };
 
   DeletedCompetencyCounter.findOneAndUpdate({ institution: req.user.institutionName },
@@ -84,7 +85,7 @@ exports.getEdit = (req, res) => Competency.findById(req.params.id)
 exports.update = (req, res) => {
   // console.log(req.body.competencyName);
   Competency.findByIdAndUpdate(req.params.id, {
-    $set: { name: req.body.competencyName, description: req.body.description },
+    $set: { name: req.body.competencyName, description: req.body.description, dateUpdated: Date.now() },
   })
     .then(res.redirect('/competencies'))
     .catch((err) => {
