@@ -5,19 +5,20 @@
         <div class="dashboard">
             <div class="competencies">
                 <h2>Most Recently Updated competencies:</h2>
-                <ul class="dashboard-competences">
+                <ul class="dashboard-competencies">
                     <% competencies.forEach(comp =>  { %>
                         <li class="competency">
                             <form action="/competencies/<%= comp._id %>" method="GET" > 
-                             <button class="not-button">
+                             <button  class="not-button competency">
                                  <h3 class="s-heading"><%=comp.number%>: <%=comp.name%></h3>
                              </button>
                              </form>
                    <% }) %> 
                 </ul>
             </div>
-            <div class="dashboard-roles">
+            <div class="roles">
                 <h2>Most Recently Updated roles:</h2>
+                <ul class="dashboard-roles">
                 <% roles.forEach(role =>  { %>
                     <li class="role">
                         <form action="/roles/<%= role._id %>" method="GET" > 
@@ -26,12 +27,13 @@
                          </button>
                          </form>
                <% }) %> 
+            </ul>
             </div>
         </div>
      <% } else { %> 
         <h1>Welcome!</h1>
         <div class="invitation">
-        <h3>Please <a>Log in</a> or <a>Sign up</a> to see your dashboard.</h3>
+        <h3>Please <a href="/login">Log in</a> or <a href="/signup">Sign up</a> to see your dashboard.</h3>
     </div>
      <% } %> 
 <%-include('../partials/footer')%>
