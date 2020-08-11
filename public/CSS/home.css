@@ -18,3 +18,12 @@
     margin: .5rem auto;
     background-color: #e2e2e2;
 }
+
+#login-info {
+    font-style: italic;
+}
+
+.example-login-label {
+    font-style: normal;
+    font-weight: 600;
+}

@@ -4,22 +4,22 @@
     <h1 class="logo-heading s-heading"><a class="logo-box-link" href="/"><% if(institution != null) { %> <%= institution %> <% } else { %> Institution <% } %></a></h1>
     <% if(!isLoggedIn) { %> 
       <div class="login">
-        <a class="logo-box-link" href="/login">Login</a> <span>|</span> <a class="logo-box-link" href="/signup">Sign-up</a>
+        <a class="logo-box-link log-link" href="/login">Login</a><span> | </span><a class="logo-box-link" href="/signup">Sign-up</a>
       </div>
     <% } else { %>
       <div class="logged-in-links">
         <form action="/logout" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button class="not-button" type="submit">
-            <p class="logo-box-link">Logout</p>
+            <p class="logo-box-link log-link">Logout</p>
           </button>
       </form>
-      <span>|</span>
-      <form action="/user" method="get">
+      
+      <!-- <form action="/user" method="get">
         <button class="not-button" type="submit">
           <p class="logo-box-link"><%= name%></p>
         </button>
-    </form>
+    </form> -->
       </div> 
     <% } %> 
       <i class="navmenu fa fa-bars" display="none"></i>
