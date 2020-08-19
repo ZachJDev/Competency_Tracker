@@ -1,5 +1,6 @@
 const CompetenciesAndSkillsList = require('../routes/internal-modules/Competencies-and-skillsObj');
 const Role = require('../models/Role.js');
+const Competency = require('../models/Competency.js');
 
 
 exports.index = (req, res) => {
@@ -16,7 +17,11 @@ exports.index = (req, res) => {
 
 exports.new = (req, res) => {
   try {
-    res.render('roles/new', { name: false, description: false });
+    Competency.find({ institution: req.user.institutionName }, null, { sort: { number: 1 } })
+      .populate({ path: ' skills', options: { sort: { number: 1 } } })
+      .then((comps) => {
+        res.render('roles/new', { name: false, description: false, comps });
+      });
   } catch (err) {
     res.send('OOPS!'); // fix error handling
   }

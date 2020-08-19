@@ -130,3 +130,11 @@ exports.destroy = (req, res) => {
       res.send('OOPS!'); // fix error handling
     });
 };
+
+exports.getJson = (req, res) => (
+  Competency.find({ institution: req.user.institutionName, number: req.query.num })
+    .populate({ path: ' skills', options: { sort: { number: 1 } } })
+    .then((comps) => {
+      res.json(comps);
+    })
+);

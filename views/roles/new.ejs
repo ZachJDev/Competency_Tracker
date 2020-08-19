@@ -16,7 +16,21 @@
   </div>
   <div class="form-group form-skills">
       <label for="skills">Role Skills:</label>
-    <input title="enter a competency number by itself to assign all of it's skills to the role" type="text" name="skills" placeholder="seperated by commas">
+    <!-- <input id="competencies-input" list="comp-list" title="enter a competency number by itself to assign all of it's skills to the role" type="text" name="skills" placeholder="seperated by commas">
+    <datalist id="comp-list">
+      <option value="Blah">
+      </datalist> -->
+      <select id="competencies-input" name="skills" class="js-example-basic-multiple competencies-input" name="states[]" multiple="multiple" style="width: 100%">
+        <% comps.forEach(comp => { %>
+          <option value="<%= comp.number %>" title="<%= comp.number %>"><%= comp.number %>: <%=comp.name%></option>
+          <p>sdf</p>
+          <% if(comp.skills.length > 0) { %>
+            <% comp.skills.forEach(skill => { %>
+              <option value="<%= comp.number %>.<%=skill.number %>" title="<%= comp.number %>.<%=skill.number %>"><%= comp.number %>.<%= skill.number %>: <%=skill.name%></option>
+            <% }) %> 
+          <% } %> 
+       <% }) %> 
+      </select>
   </div>
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="button-group">   

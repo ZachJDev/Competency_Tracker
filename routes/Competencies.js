@@ -8,6 +8,8 @@ const middleware = require('./internal-modules/middleware.js');
 // index
 router.get('/', competenciesController.competenciesIndex);
 
+router.get('/json', competenciesController.getJson);
+
 // New
 router.get('/new', competenciesController.getNew);
 
