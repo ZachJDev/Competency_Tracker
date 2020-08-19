@@ -20,7 +20,9 @@ exports.new = (req, res) => {
     Competency.find({ institution: req.user.institutionName }, null, { sort: { number: 1 } })
       .populate({ path: ' skills', options: { sort: { number: 1 } } })
       .then((comps) => {
-        res.render('roles/new', { name: false, description: false, comps });
+        res.render('roles/new', {
+          name: false, description: false, comps, skillSelector: true,
+        });
       });
   } catch (err) {
     res.send('OOPS!'); // fix error handling

@@ -2,10 +2,7 @@
 <html>
   <head>
     <title>Competency Tracker</title>
-    <script
-      src="https://kit.fontawesome.com/6a3cdcdfe7.js"
-      crossorigin="anonymous"
-    ></script>
+    <% if(skillSelector) { %>
     <link
       href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
       rel="stylesheet"
@@ -15,7 +12,13 @@
       integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
       crossorigin="anonymous"
     ></script>
+
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <% } %> 
+    <script
+    src="https://kit.fontawesome.com/6a3cdcdfe7.js"
+    crossorigin="anonymous"
+  ></script>
     <link rel="stylesheet" href="/CSS/main.css" type="text/css" />
     <link rel="stylesheet" href="/CSS/nav.css" type="text/css" />
     <link rel="stylesheet" href="/CSS/indexes.css" type="text/css" />

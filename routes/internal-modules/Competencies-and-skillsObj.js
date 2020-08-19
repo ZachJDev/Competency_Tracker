@@ -29,13 +29,13 @@ async function findSkillIds(competenciesAndSkills) {
   }
   const comps = await Promise.all(promises);
   for (const id of justCompetencyIds) {
-    const helper = comps.filter((el) => el._id == id);
-    const comp = helper[0];
+    const comp = comps.filter((el) => el._id == id)[0];
     for (const skillNumber of competenciesAndSkills[id]) {
+      let skill;
       if (skillNumber === 0) {
         skill = comp.skills.map((el) => el._id);
       } else {
-        skill = comp.skills.filter((el) => el.number == skillNumber);
+        skill = comp.skills.filter((el) => el.number === skillNumber);
       }
       if (!newCompetenciesObject[id]) newCompetenciesObject[id] = [];
       newCompetenciesObject[id].push(...skill);
@@ -57,14 +57,13 @@ function makeArrayForModel(competenciesAndSkills) {
 module.exports = class CompetenciesAndSkills {
   constructor(skills, institution, oldSkills = []) {
     this.institution = institution;
-    console.log(this.institution);
     this.skillsSet = new Set(oldSkills);
     this.unparsedSkills = skills;
     // IIFE below. outputs: {compNum: [skills], compNum: [skills],...}
     this.skillsMap = (() => {
       const competenciesAndSkills = {};
       const skillsArray = [];
-      const s = this.unparsedSkills.split(',');
+      const s = this.unparsedSkills;
 
       s.forEach((skill) => {
         this.skillsSet.add(skill);
@@ -74,16 +73,21 @@ module.exports = class CompetenciesAndSkills {
         const splitSkills = skill.split('.'); // this extra array makes sure that two or three digit competencies/skills will work too. those caused errors last time.
         skillsArray.push(splitSkills);
       });
-
       // skillsArray: [[compNum, skillNum], [compNum, skillNum]...]
+
       for (const skill of skillsArray) {
         if (isNaN(skill[0])) {
           throw new TypeError(`'${skill[0]}' is not a valid competency`);
         }
         if (!competenciesAndSkills[skill[0]]) { competenciesAndSkills[skill[0]] = []; }
-        if (skill[1] === undefined) competenciesAndSkills[skill[0]].push(0);
         // zero to keep NaNs out of my code. this will end up just pushing every skill.
-        else {
+        if (skill[1] === undefined) competenciesAndSkills[skill[0]].push(0);
+
+        /** Only pushes skills if it isn't pushing 0 (i.e. all skills).
+        When writing this, I'm assuming that the whole competency will
+        be at index 0 if it's present at all. This is how the multi-select works,
+        but if that changes, I need to fix it here too.* */
+        else if (competenciesAndSkills[skill[0]][0] !== 0) {
           competenciesAndSkills[skill[0]].push(Number(skill[1]));
           competenciesAndSkills[skill[0]].sort((a, b) => a - b);
         }

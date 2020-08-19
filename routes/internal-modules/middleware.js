@@ -66,6 +66,7 @@ middleware.addLocals = (req, res, next) => {
     name: req.user ? req.user.name : null,
     csrfToken: req.csrfToken(),
     institution: req.user ? req.user.institutionName : null,
+    skillSelector: false,
   });
 
   next();
