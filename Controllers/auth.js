@@ -23,7 +23,8 @@ exports.postLogin = (req, res, next) => {
       req.session.isLoggedIn = true;
       req.session.user = user;
       return req.session.save();
-    }).then((err) => {
+    })
+    .then((err) => {
       res.redirect('/');
     })
     .catch((err) => {
@@ -38,15 +39,21 @@ exports.getSignup = (req, res, next) => {
   });
 };
 
-
 // I really dislike how long this is....
 exports.postSignup = (req, res, next) => {
   let foundInstitution;
   let promise;
   let institution = null;
+  const defaultPermissions = {};
   const {
-    email, password, confirmPassword, institutionPassword, newInstitution,
-    confirmInstitutionPassword, name, institutionName,
+    email,
+    password,
+    confirmPassword,
+    institutionPassword,
+    newInstitution,
+    confirmInstitutionPassword,
+    name,
+    institutionName,
   } = req.body;
 
   // Transform the checkbox into a boolean
@@ -54,12 +61,17 @@ exports.postSignup = (req, res, next) => {
 
   try {
     // Basic form handling
-    if (!(password === confirmPassword)) throw new Error('\'Password\' and \'Confirm Password\' fields much match');
-    if (!(institutionPassword === confirmInstitutionPassword) && isNewInstitution) {
-      throw new Error('\'Institution Password\' and \'Confirm Institution Password\' fields much match');
+    if (!(password === confirmPassword)) { throw new Error("'Password' and 'Confirm Password' fields much match"); }
+    if (
+      !(institutionPassword === confirmInstitutionPassword)
+      && isNewInstitution
+    ) {
+      throw new Error(
+        "'Institution Password' and 'Confirm Institution Password' fields much match",
+      );
     }
     if (name === undefined) throw new Error('Please enter a name');
-    if (isNewInstitution && institutionName === undefined) throw new Error('Please enter an institution name');
+    if (isNewInstitution && institutionName === undefined) { throw new Error('Please enter an institution name'); }
 
     // Create a new Institution, if need be.
     if (isNewInstitution) {
@@ -78,14 +90,20 @@ exports.postSignup = (req, res, next) => {
       });
     }
 
-
     // Though email is a unique field, I don't want to rehash the password if a duplicate is
     // Found so I confirm that the user is new before doing anything with the information.
-    promise.then(() => Institution.findOne({ institutionPassword })).then((i) => {
-      foundInstitution = i;
-      if (!foundInstitution) throw new Error('No institution found');
-      return User.findOne({ email });
-    })
+    promise
+      .then(() => Institution.findOne({ institutionPassword }))
+      .then((i) => {
+        foundInstitution = i;
+        if (!foundInstitution) throw new Error('No institution found');
+        Object.assign(defaultPermissions, {
+          readOnly: foundInstitution.defaultReadOnly,
+          commentOnly: foundInstitution.defaultCommentOnly,
+          admin: isNewInstitution,
+        });
+        return User.findOne({ email });
+      })
       .then((user) => {
         if (user) {
           throw new Error('Invalid email or password');
@@ -93,20 +111,21 @@ exports.postSignup = (req, res, next) => {
         return bcrypt.hash(password, 12);
       })
       .then((hashedPassword) => {
+        console.log(isNewInstitution, defaultPermissions);
         const newUser = new User({
           name,
           email,
           hashedPassword,
-          admin: isNewInstitution,
           institution: foundInstitution._id,
-          permissions: institution.defaultPermisions,
-          institutionName: institution.institutionName,
+          permissions: defaultPermissions,
+          institutionName: foundInstitution.institutionName,
         });
         return newUser.save();
       })
       .then((result) => {
         // Is it bad to send the plain text password back to login to make it easier to
         // Actually log in? I can probably work out a way to log the user in here automatically.
+        console.log(result);
         res.redirect('/login');
       })
       .catch((err) => {
