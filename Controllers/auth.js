@@ -111,7 +111,6 @@ exports.postSignup = (req, res, next) => {
         return bcrypt.hash(password, 12);
       })
       .then((hashedPassword) => {
-        console.log(isNewInstitution, defaultPermissions);
         const newUser = new User({
           name,
           email,
@@ -125,7 +124,6 @@ exports.postSignup = (req, res, next) => {
       .then((result) => {
         // Is it bad to send the plain text password back to login to make it easier to
         // Actually log in? I can probably work out a way to log the user in here automatically.
-        console.log(result);
         res.redirect('/login');
       })
       .catch((err) => {

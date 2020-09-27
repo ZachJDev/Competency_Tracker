@@ -16,7 +16,6 @@ const csrfProtection = csrf();
 const app = express();
 const port = process.env.PORT || 5500;
 const database = process.env.COMP_DATABASEURL;
-console.log(database);
 
 // Not the most secure way to store secrets, but this isn't storing any sensitive data, sooo...
 const secret = JSON.parse(process.env.SECRET);
